@@ -1,0 +1,30 @@
+# bat app
+- name: Installing bat packages
+  become: true
+  apt:
+    deb: https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb
+
+# add alias in bashrc or zshrc
+- name: check if bashrc exists
+  stat:
+    path: '{{ home_user }}/.bashrc'
+  register: bashrc
+
+- name: Append alias at .bashrc file
+  lineinfile:
+    path: '{{ home_user }}/.bashrc'
+    line: "alias bat='bat --theme ansi'"
+    state: present
+  when: bashrc.stat.exists
+
+- name: check if zshrc exists
+  stat:
+    path: '{{ home_user }}/.zshrc'
+  register: zshrc
+
+- name: Append alias at .zshrc file
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    line: "alias bat='bat --theme ansi'"
+    state: present
+  when: zshrc.stat.exists

@@ -1,0 +1,41 @@
+# Instalação do VSCode
+- name: Install Microsoft Key
+  become: true
+  apt_key:
+    url: 'https://packages.microsoft.com/keys/microsoft.asc'
+    state: present
+- name: Install VSCode Repository
+  become: true
+  apt_repository:
+    repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+    state: present
+    filename: vscode
+- name: Install Visual Studio Code
+  become: true
+  apt:
+    name: code
+- name: Install Virtual Studio Code Extensions
+  shell:
+    cmd: code --install-extension '{{ item }}' 
+  loop: 
+    - ms-python.python
+    - redhat.vscode-yaml
+    - vscode-icons-team.vscode-icons
+    - ms-vscode.cpptools
+    - golang.go
+    - oderwat.indent-rainbow
+    - ms-azuretools.vscode-docker
+    - ms-kubernetes-tools.vscode-kubernetes-tools
+    - hashicorp.terraform
+    - bbenoist.vagrant
+    - ms-ceintl.vscode-language-pack-pt-br
+    - eamodio.gitlens
+    - casualjim.gotemplate
+    - ivory-lab.jenkinsfile-support
+    - yzhang.markdown-all-in-one
+    - DavidAnson.vscode-markdownlint
+    - CharlesWan.markdown-toc
+    - timonwong.shellcheck
+    - HashiCorp.terraform
+    - Tim-Koehler.helm-intellisense
+    - gurumukhi.selected-lines-count

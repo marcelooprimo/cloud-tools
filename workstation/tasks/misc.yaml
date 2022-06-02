@@ -1,0 +1,66 @@
+# Cria diretorio git
+- name: Creating git directory
+  file:
+    path: '{{ home_user }}/git'
+    state: directory
+    mode: '0755'
+
+# Copia o script que fará 
+# as atualizações do repositório
+- name: Copy script to update git dir repo
+  file:
+    src: '{{ role_path }}/files/sync_git.sh'
+    dest: '{{ home_user }}'
+    mode: '0775'
+
+# Adiciona todas modificações 
+# da variavel $PATH do sistema
+- name: Check if bashrc exists
+  stat:
+    path: '{{ home_user }}/.bashrc'
+  register: bashrc
+
+- name: Append $PATH at .bashrc file
+  lineinfile:
+    path: '{{ home_user }}/.bashrc'
+    line: '{{ app_path }}'
+    state: present
+  when: bashrc.stat.exists
+
+- name: Check if zshrc exists
+  stat:
+    path: '{{ home_user }}/.zshrc'
+  register: zshrc
+
+- name: Append $PATH at .zshrc file
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    line: '{{ app_path }}'
+    state: present
+  when: zshrc.stat.exists
+
+# Adiciona os aliases customizados
+# caso não estejam no arquivo
+- name: Checking custom aliases in bashrc
+  lineinfile:
+    path: '{{ home_user }}/.bashrc'
+    line: '# Custom Aliases'
+  check_mode: true
+  register: bash_alias
+
+- name: Checking custom aliases in bashrc
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    line: '# Custom Aliases'
+  check_mode: true
+  register: zsh_alias
+
+- name: Append custom aliases at .bashrc file
+  shell:
+    cmd: 'cat {{ role_path }}/files/aliases >> ~/.bashrc'
+  when: bashrc.stat.exists and bash_alias.changed is match('True')
+
+- name: Append custom aliases at .zshrc file
+  shell:
+    cmd: 'cat {{ role_path }}/files/aliases >> ~/.zshrc'
+  when: zshrc.stat.exists and zsh_alias.changed is match('True')

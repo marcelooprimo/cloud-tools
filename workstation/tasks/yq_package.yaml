@@ -1,0 +1,7 @@
+# Instala o YQ
+- name: Install yq app
+  become: true
+  get_url:
+    url: 'https://github.com/mikefarah/yq/releases/download/{{ yq_version }}/{{ yq_binary }}'
+    dest: '/usr/bin/'
+    mode: '0755'

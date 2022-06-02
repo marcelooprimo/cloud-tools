@@ -1,0 +1,14 @@
+# Faz download do Helm Docs
+- name: Downloading Helm Docs
+  become: true
+  unarchive:
+    src: 'https://github.com/norwoodj/helm-docs/releases/download/v{{ helm_docs_version }}/{{ helm_docs_package }}'
+    dest: '/usr/local/bin'
+    remote_src: yes
+
+# Adiciona permissão de execução
+- name: Adding execution attribute for Helm Docs
+  become: true
+  file:
+    path: '/usr/local/bin/helm-docs'
+    mode: '0755'

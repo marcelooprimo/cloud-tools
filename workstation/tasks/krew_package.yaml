@@ -1,0 +1,11 @@
+# Faz download do krew
+- name: Downloading Krew
+  unarchive:
+    src: https://github.com/kubernetes-sigs/krew/releases/latest/download/{{ krew_package }}.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+# Instala o krew
+- name: Installing Krew
+  shell:
+    cmd: '/tmp/{{ krew_package }} install krew'

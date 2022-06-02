@@ -1,0 +1,113 @@
+# configura o ZSH e instala o tema
+# powerlevel10k
+- name: Verify if Oh-My-zsh is installed
+  stat:
+    path: '{{ home_user }}/.oh-my-zsh'
+  register: ohmyzsh
+  ignore_errors: true
+
+- name: Installing Oh-My-zsh
+  shell:
+    cmd: 'curl -fsL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash'
+    warn: false
+  when: not ohmyzsh.stat.exists
+
+- name: Changing Default Shell to ZSH
+  become: true
+  user: 
+    name: '{{ ansible_user_id }}'
+    shell: /bin/zsh
+
+- name: Verifying if powerlevel10k folder exist
+  stat:
+    path: "{{ home_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+  register: powerlevel10k
+
+- name: Adding powerlevel10k theme
+  git:
+    repo: 'https://github.com/romkatv/powerlevel10k.git'
+    dest: '{{ home_user }}/.oh-my-zsh/custom/themes/powerlevel10k'
+  when: not powerlevel10k.stat.exists
+
+- name: Changing Default ZSH Theme to powerlevel10k
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    regexp: '^ZSH_THEME='
+    line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
+
+- name: Verifying if powerlevel10k folder exist
+  stat:
+    path: '{{ home_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions'
+  register: autosuggestions
+
+- name: Adding zsh-autosuggestions
+  git:
+    repo: 'https://github.com/zsh-users/zsh-autosuggestions'
+    dest: '{{ home_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions'
+  when: not autosuggestions.stat.exists
+
+- name: Enabling zsh-autosuggestions
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    regexp: '^plugins='
+    line: 'plugins=(git zsh-autosuggestions)'
+
+- name: Enabling Autorehash
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    insertafter: '^# User'
+    line: "\n# Persistent rehash\nzstyle ':completion:*' rehash true"
+
+- name: Verifying if vte.sh shortcut exist
+  stat:
+    path: '/etc/profile.d/vte.sh'
+  register: vte
+
+- name: Configuring Tilix - creating symbolic link
+  become: true
+  file:
+    src: '/etc/profile.d/vte-2.91.sh'
+    dest: '/etc/profile.d/vte.sh'
+    state: link
+  when: not vte.stat.exists
+
+- name: Configuring Tilix - Add .zshrc lines
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    line: 'if [ $TILIX_ID ] || [ $VTE_VERSION ]; then source /etc/profile.d/vte.sh; fi'
+    state: present
+
+- name: Adding autoload to compinit
+  lineinfile:
+    path: '{{ home_user }}/.zshrc'
+    line: 'autoload -U compinit && compinit'
+    state: present
+
+# Instala as fontes necessárias
+- name: Installing MesloLGS Regular
+  become: true
+  get_url:
+    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
+    dest: '/usr/share/fonts/'
+    mode: 0664
+
+- name: Installing MesloLGS Bold
+  become: true
+  get_url:
+    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
+    dest: '/usr/share/fonts/'
+    mode: 0664
+
+- name: Installing MesloLGS Italic
+  become: true
+  get_url:
+    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
+    dest: '/usr/share/fonts/'
+    mode: 0664
+
+- name: Installing MesloLGS Bold Italic
+  become: true
+  get_url:
+    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
+    dest: '/usr/share/fonts/'
+    mode: 0664
