@@ -1,4 +1,4 @@
-Chapter Cloud Tools
+Cloud Tools
 =========
 
 Este playbook tem por finalidade facilitar a preparação da estação de trabalho instalando as ferramentas necessárias ao trabalho do dia a dia.
