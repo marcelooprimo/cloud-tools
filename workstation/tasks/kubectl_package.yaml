@@ -1,0 +1,22 @@
+# Adiciona a key do repositório do kubectl
+- name: Add k8s Key
+  become: true
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    keyring: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+    state: present
+
+# Adiciona o repositório
+- name: Add k8s repository
+  become: true
+  apt_repository:
+    repo: 'deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main'
+    state: present
+    filename: kubernetes
+
+# Instala o kubectl
+- name: Installing kubectl package
+  become: true
+  apt:
+    update_cache: yes
+    name: 'kubectl'

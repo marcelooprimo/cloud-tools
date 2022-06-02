@@ -1,0 +1,12 @@
+# Faz o download do Helmfile
+- name: Downloading Helmfile
+  become: true
+  get_url:
+    url: 'https://github.com/roboll/helmfile/releases/download/{{ helmfile_version }}/{{ helmfile_downloaded_filename }}'
+    dest: '/usr/local/bin/helmfile'
+    mode: '0755'
+
+# verifica execução do helmfile
+- name: Check Helmfile execution
+  shell:
+    cmd: '/usr/local/bin/helmfile --version'

@@ -1,0 +1,52 @@
+---
+# PATH final com todos apps instalados (copiados de um hosts já configurado)
+app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx"'
+
+# AWS modo de instalação, opção pip ou apt
+awscli_install_mode: 'pip'
+
+# AWS IAM VERSION
+iam_auth_version: '1.14.6'
+
+# Docker Machine
+docker_machine: 'no'
+
+# Golang
+golang_dir: '/usr/local/go'
+golang_version: '1.17.5'
+
+# Home do Usuario
+home_user: '/home/{{ ansible_user_id }}'
+
+# Usuário
+user_id: '{{ ansible_user_id }}'
+
+# Helm
+helm_package: 'helm=3.7.1-1'
+
+# Helm Docs
+helm_docs_version: '1.5.0'
+helm_docs_package: 'helm-docs_{{ helm_docs_version }}_linux_x86_64.tar.gz'
+
+# Helmfile
+helmfile_version: 'v0.142.0'
+helmfile_downloaded_filename: 'helmfile_linux_amd64'
+
+# JJ
+jj_version: '1.2.3'
+
+# Krew
+krew_package: 'krew-linux_amd64'
+
+# KubeFWD
+kubefwd_version: '1.22.0'
+
+# Kubepug
+kubepug_version: 'v1.1.3'
+
+# Terraform docs
+terraform_docs_version: 'v0.15.0'
+
+# YQ
+yq_version: 'v4.24.2'
+yq_binary: 'yq_linux_amd64'

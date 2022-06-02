@@ -1,0 +1,64 @@
+# O Linux mint não tem suporte a snap
+# e para instalar é preciso remover
+# o arquivo nosnap que está em preferences.d
+- name: Moving nosnap file
+  become: true
+  shell:
+    cmd: 'mv /etc/apt/preferences.d/nosnap.pref ~/nosnap.backup'
+  when: ansible_distribution == 'Linux Mint'
+
+- name: Install OS packages
+  become: true
+  apt:
+    update_cache: yes
+    install_recommends: yes
+    pkg:
+    - apt-transport-https
+    - bash-completion
+    - build-essential
+    - ca-certificates
+    - curl
+    - default-jdk
+    - elinks
+    - fzf
+    - gnome-tweak-tool
+    - gnupg
+    - htop 
+    - jq
+    - lsb-release
+    - meld
+    - mlocate
+    - mtr
+    - mysql-client
+    - netcat
+    - net-tools
+    - openssl
+    - p7zip-full
+    - p7zip-rar
+    - python3-pip
+    - python3.8
+    - python3.8-venv
+    - redis-tools
+    - snapd
+    - tcpdump
+    - telnet 
+    - tilix
+    - traceroute 
+    - tree
+    - vim 
+    - virtualbox
+    - wget
+    - whois
+    - wireshark
+    - zsh
+
+
+# Executa o comando:
+# update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
+- name: Update alternatives for python3
+  become: true
+  alternatives:
+    name: python
+    link: /usr/bin/python
+    path: /usr/bin/python3.8
+    priority: 1

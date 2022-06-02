@@ -1,0 +1,31 @@
+---
+# Pacotes Base
+- import_tasks: os_packages.yaml
+- import_tasks: zsh_package.yaml
+- import_tasks: misc.yaml
+# Go
+- import_tasks: golang_package.yaml
+# Docker
+- import_tasks: docker_package.yaml
+# AWS
+- import_tasks: aws_package.yaml
+# Google Cloud
+- import_tasks: gcloud_package.yaml
+# k8s
+- import_tasks: kubectl_package.yaml
+- import_tasks: kubectx_kubens_package.yaml
+- import_tasks: krew_package.yaml
+- import_tasks: k8splugins_package.yaml
+# Helm
+- import_tasks: helm_package.yaml
+- import_tasks: helm_docs_package.yaml
+- import_tasks: helmfile_package.yaml
+# Terraform
+- import_tasks: tfenv_package.yaml
+- import_tasks: tgenv_package.yaml
+- import_tasks: terraformdocs_package.yaml
+# Misc
+- import_tasks: yq_package.yaml
+- import_tasks: jj_package.yaml
+- import_tasks: bat_package.yaml
+- import_tasks: vscode.yaml

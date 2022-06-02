@@ -1,0 +1,7 @@
+# Faz o download do terraform docs
+- name: Downloading Terraform Docs
+  become: true
+  unarchive:
+    src: 'https://github.com/terraform-docs/terraform-docs/releases/download/{{ terraform_docs_version }}/terraform-docs-{{ terraform_docs_version }}-linux-amd64.tar.gz'
+    dest: '/usr/local/bin/'
+    remote_src: yes
