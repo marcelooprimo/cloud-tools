@@ -17,13 +17,18 @@ then
 	echo "------------------------------"
 	echo "Não foi informado um diretório"
 	echo -e "------------------------------\n"
-	echo "MODO DE USO: ./sync_git.sh DIRETORIO"
+	echo "MODO DE USO: ./sync_git.sh CAMINHO/DIRETORIO_1 CAMINHO/DIRETORIO_2 CAMINHO/DIRETORIO_N"
 	exit 1
 fi
 
-while read diretorio;
+while [[ -n $1 ]]
 do
-	echo -e "\n\033[1;32m*** Sincronizando o repositório ${diretorio/\/.git/} ***\033[0m"
-	git -C ${diretorio/\/.git/} pull
-	
-done <<< $(find "$1" -maxdepth 3 -type d -name .git)
+	while read diretorio;
+	do
+		echo -e "\n\033[1;32m*** Sincronizando o repositório ${diretorio/\/.git/} ***\033[0m"
+		git -C "${diretorio/\/.git/}" pull
+		
+	done <<< "$(find "$1" -maxdepth 3 -type d -name .git)"
+
+	shift
+done
