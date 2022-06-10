@@ -5,6 +5,9 @@ app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/o
 # AWS modo de instalação, opção pip ou apt
 awscli_install_mode: 'pip'
 
+# Versão do AWS CLI - opção v1 ou v2
+awscli_version: 'v1'
+
 # AWS IAM VERSION
 iam_auth_version: '1.14.6'
 
@@ -48,5 +51,8 @@ kubepug_version: 'v1.1.3'
 terraform_docs_version: 'v0.15.0'
 
 # YQ
-yq_version: 'v4.24.2'
+# Nota: As versões 4.1.0 e recentes possuem a letra v antes do número da versão
+# as versões mais antigas 4.0.0 e anteriores não possuem tal letra.
+# Verificar a nomenclatura e alterar a variável antes de iniciar o playbook
+yq_version: '3.4.1'
 yq_binary: 'yq_linux_amd64'
