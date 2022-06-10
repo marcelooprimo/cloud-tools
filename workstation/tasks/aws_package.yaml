@@ -1,16 +1,31 @@
-# AWS CLI via apt
-- name: Installing AWS CLI
+# AWS CLI V1 via apt
+- name: Installing AWS CLI via APT
   become: true
   apt:
     install_recommends: yes
     name: awscli
-  when: '{{ awscli_install_mode is match("apt") }}'
+  when: '{{ awscli_install_mode is match("apt") and awscli_version is match("v1") }}'
 
-# AWS CLI via pip
-- name: Installing AWS CLI
+# AWS CLI AWS CLI V1 via pip
+- name: Installing AWS CLI via PIP
   shell:
     cmd: 'python -m pip install awscli --upgrade --user'
-  when: '{{ awscli_install_mode is match("pip") }}'
+  when: '{{ awscli_install_mode is match("pip") and awscli_version is match("v1") }}'
+
+# AWS CLI V2 via repo AWS  
+- name: Downloading AWS CLI V2
+  unarchive:
+    src: 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip'
+    dest: '/tmp/'
+    remote_src: yes
+    creates: '/tmp/aws'
+  when: '{{ awscli_version is match("v2") }}'
+
+- name: Installing AWS CLI V2
+  become: true
+  shell:
+    cmd: '/tmp/aws/install'
+  when: '{{ awscli_version is match("v2") }}'
 
 # Adicionar alias caso seja instalado via pip
 - name: Check if bashrc exists
@@ -23,7 +38,7 @@
     path: '{{ home_user }}/.bashrc'
     line: 'alias aws="python -m awscli"'
     state: present
-  when: bashrc.stat.exists
+  when: '{{ bashrc.stat.exists and awscli_install_mode is match("pip") and awscli_version is match("v1") }}'
 
 - name: Check if zshrc exists
   stat:
@@ -35,7 +50,7 @@
     path: '{{ home_user }}/.zshrc'
     line: 'alias aws="python -m awscli"'
     state: present
-  when: zshrc.stat.exists
+  when: '{{ zshrc.stat.exists and awscli_install_mode is match("pip") and awscli_version is match("v1") }}'
 
 # AWS SSM
 - name: Installing AWS SSM
@@ -44,7 +59,7 @@
     deb: https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb
 
 # AWS IAM Authentication
-- name: Downloading IAM Authentication
+- name: Installing IAM Authentication
   become: true
   get_url:
     url: 'https://amazon-eks.s3-us-west-2.amazonaws.com/{{ iam_auth_version }}/2019-08-22/bin/linux/amd64/aws-iam-authenticator'
