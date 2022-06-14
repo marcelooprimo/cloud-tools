@@ -73,8 +73,8 @@ cloud_tools
 Informações Importantes
 -------
 
-- **Este playbook foi testado nas distros ```ubuntu 20.04``` e ```Linux Mint 20.3``` (que é uma variante da primeira).**
-- Ele irá instalar o ZShell no host e configurá-lo como padrão com o tema powerlevel10k.
+- **Este playbook foi testado nas distros ```ubuntu 20.04``` e ```Linux Mint 20.3``` (esta última é uma variante da primeira, então nada muda :wink: ).**
+- Ele irá instalar o ZShell no host e configurá-lo como padrão com o tema powerlevel10k (Caso não seja seu shell padrão, basta apenas comentar a linha import_task respectiva presente no arquivo ```workstation/tasks/main.yaml```).
 - Há opção de instalar o docker machine, mas é necessário alterar a opção no arquivo ```workstation/vars/main.yaml```
 - O diretório ```workstation/files``` contém alguns scripts de instalação e os aliases customizados.
 - Possivelmente haverá alguns bugs, necessidade de melhoria de código, então, sinta-se à vontade para corrigí-los; Juntos podemos deixá-lo melhor e mais eficiente.
@@ -83,7 +83,7 @@ Informações Importantes
 Licença de uso
 ------------------
 
-O uso deste playbook é livre e pode ser modificado/melhorado conforme necessidade ;-)
+O uso deste playbook é livre e pode ser modificado/melhorado conforme necessidade :wink:
 
 Informações do Autor
 ------------------
