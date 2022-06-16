@@ -8,7 +8,7 @@
 # Copia o script que fará 
 # as atualizações do repositório
 - name: Copy script to update git dir repo
-  file:
+  copy:
     src: '{{ role_path }}/files/sync_git.sh'
     dest: '{{ home_user }}'
     mode: '0775'
