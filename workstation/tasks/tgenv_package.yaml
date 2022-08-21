@@ -22,10 +22,10 @@
 # Altera o link para aumentar o escopo da busca
 # na api do github https://github.com/cunymatthieu/tgenv/blob/master/libexec/tgenv-list-remote#L12
 - name: Fix github api link
-  lineinfile:
-    path: '{{ home_user }}/.tgenv/libexec/tgenv-list-remote'
-    regexp: '^link_release='
-    line: 'link_release="https://api.github.com/repos/gruntwork-io/terragrunt/tags?per_page=1000&page=2"'
+  copy:
+    src: '{{ role_path }}/files/tgenv-list-remote'
+    dest: '{{ home_user }}/.tgenv/libexec/tgenv-list-remote'
+    mode: '0755'
 
 # Instala as versões do terraform
 - name: Installing terragrunt versions
