@@ -28,9 +28,9 @@
 # Adiciona o Helm Diff
 - name: Add Helm Diff
   shell:
-    cmd: 'helm plugin install https://github.com/databus23/helm-diff --version v3.4.1'
+    cmd: 'helm plugin install https://github.com/databus23/helm-diff --version v3.5.0'
 
 # Adiciona o Helm Secrets
 - name: Add Helm Secrets
   shell:
-    cmd: 'helm plugin install https://github.com/jkroepke/helm-secrets --version v3.5.0'
+    cmd: 'helm plugin install https://github.com/jkroepke/helm-secrets --version v3.15.0'
