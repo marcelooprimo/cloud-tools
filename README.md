@@ -76,7 +76,7 @@ Quebra de compatibilidade
 -------
 
 > - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04``` e ```Linux Mint 21``` (esta última é uma variante da primeira, então nada muda :wink: ).**
-> - **Para utilizar este playbook, nas versões 20.04 e 20.3 do Mint, baixe a release 1.0.0.**
+> - **Para utilizar este playbook, nas versões ```ubuntu 20.04``` e ```Linux Mint 20.3```, baixe a release 1.0.0.**
 
 Informações Importantes
 -------
