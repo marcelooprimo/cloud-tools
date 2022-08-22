@@ -33,52 +33,61 @@ Estrutura
 Este projeto possui a seguinte estrutura de diretórios:
 
 ```sh
-cloud_tools
+cloud-tools
+├── LICENSE
 ├── playbook-main.yaml
 ├── README.md
 └── workstation
     ├── files
-    │   ├── aliases
-    │   ├── shellcheck_install.sh
-    │   ├── sops_install.sh
-    │   └── sync_git.sh
+    │   ├── aliases
+    │   ├── shellcheck_install.sh
+    │   ├── sops_install.sh
+    │   ├── sync_git.sh
+    │   └── tgenv-list-remote
     ├── tasks
-    │   ├── aws_package.yaml
-    │   ├── bat_package.yaml
-    │   ├── docker_package.yaml
-    │   ├── gcloud_package.yaml
-    │   ├── golang_package.yaml
-    │   ├── helm_docs_package.yaml
-    │   ├── helmfile_package.yaml
-    │   ├── helm_package.yaml
-    │   ├── jj_package.yaml
-    │   ├── k8splugins_package.yaml
-    │   ├── krew_package.yaml
-    │   ├── kubectl_package.yaml
-    │   ├── kubectx_kubens_package.yaml
-    │   ├── main.yaml
-    │   ├── misc.yaml
-    │   ├── os_packages.yaml
-    │   ├── terraformdocs_package.yaml
-    │   ├── tfenv_package.yaml
-    │   ├── tgenv_package.yaml
-    │   ├── vscode.yaml
-    │   ├── yq_package.yaml
-    │   └── zsh_package.yaml
+    │   ├── aws_package.yaml
+    │   ├── bat_package.yaml
+    │   ├── docker_package.yaml
+    │   ├── gcloud_package.yaml
+    │   ├── golang_package.yaml
+    │   ├── helm_docs_package.yaml
+    │   ├── helmfile_package.yaml
+    │   ├── helm_package.yaml
+    │   ├── jj_package.yaml
+    │   ├── k8splugins_package.yaml
+    │   ├── krew_package.yaml
+    │   ├── kubectl_package.yaml
+    │   ├── kubectx_kubens_package.yaml
+    │   ├── main.yaml
+    │   ├── misc.yaml
+    │   ├── os_packages.yaml
+    │   ├── terraformdocs_package.yaml
+    │   ├── tfenv_package.yaml
+    │   ├── tgenv_package.yaml
+    │   ├── vscode.yaml
+    │   ├── yq_package.yaml
+    │   └── zsh_package.yaml
     └── vars
         └── main.yaml
 
 ```
 
+Quebra de compatibilidade
+-------
+
+> - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04``` e ```Linux Mint 21``` (esta última é uma variante da primeira, então nada muda :wink: ).**
+> - **Para utilizar este playbook, nas versões 20.04 e 20.3 do Mint, baixe a release 1.0.0.**
+
 Informações Importantes
 -------
 
-- **Este playbook foi testado nas distros ```ubuntu 20.04``` e ```Linux Mint 20.3``` (esta última é uma variante da primeira, então nada muda :wink: ).**
-- Ele irá instalar o ZShell no host e configurá-lo como padrão com o tema powerlevel10k (Caso não seja seu shell padrão, basta apenas comentar a linha import_task respectiva presente no arquivo ```workstation/tasks/main.yaml```).
+- Este playbook irá instalar o ZShell no host e configurá-lo como padrão com o tema powerlevel10k (Caso não seja seu shell padrão, basta apenas comentar a linha import_task respectiva presente no arquivo ```workstation/tasks/main.yaml```).
 - Há opção de instalar o docker machine, mas é necessário alterar a opção no arquivo ```workstation/vars/main.yaml```
-- O diretório ```workstation/files``` contém alguns scripts de instalação e os aliases customizados.
+- O diretório ```workstation/files``` contém alguns scripts importantes e aliases customizados.
+- Ainda no diretório ```workstation/files```, o script `tgenv-list-remote` contém um fix para a paginação dos repositórios do tgenv (atualmente ele lista 2 páginas).
 - Possivelmente haverá alguns bugs, necessidade de melhoria de código, então, sinta-se à vontade para corrigí-los; Juntos podemos deixá-lo melhor e mais eficiente.
 - **Não esqueça do seu PR após alteração relevante**. :wink:
+
 
 Licença de uso
 ------------------

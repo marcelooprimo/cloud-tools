@@ -6,17 +6,17 @@ app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/o
 awscli_install_mode: 'pip'
 
 # Versão do AWS CLI - opção v1 ou v2
-awscli_version: 'v1'
+awscli_version: 'v2'
 
 # AWS IAM VERSION
-iam_auth_version: '1.14.6'
+iam_auth_version: '1.21.2'
 
 # Docker Machine
 docker_machine: 'no'
 
 # Golang
 golang_dir: '/usr/local/go'
-golang_version: '1.17.5'
+golang_version: '1.19'
 
 # Home do Usuario
 home_user: '/home/{{ ansible_user_id }}'
@@ -25,30 +25,30 @@ home_user: '/home/{{ ansible_user_id }}'
 user_id: '{{ ansible_user_id }}'
 
 # Helm
-helm_package: 'helm=3.7.1-1'
+helm_package: 'helm=3.9.3-1'
 
 # Helm Docs
-helm_docs_version: '1.5.0'
+helm_docs_version: '1.11.0'
 helm_docs_package: 'helm-docs_{{ helm_docs_version }}_linux_x86_64.tar.gz'
 
 # Helmfile
-helmfile_version: 'v0.142.0'
+helmfile_version: 'v0.144.0'
 helmfile_downloaded_filename: 'helmfile_linux_amd64'
 
 # JJ
-jj_version: '1.2.3'
+jj_version: '1.9.2'
 
 # Krew
 krew_package: 'krew-linux_amd64'
 
 # KubeFWD
-kubefwd_version: '1.22.0'
+kubefwd_version: '1.22.3'
 
 # Kubepug
-kubepug_version: 'v1.1.3'
+kubepug_version: 'v1.3.4'
 
 # Terraform docs
-terraform_docs_version: 'v0.15.0'
+terraform_docs_version: 'v0.16.0'
 
 # YQ
 # Nota: As versões 4.1.0 e recentes possuem a letra v antes do número da versão
@@ -56,3 +56,6 @@ terraform_docs_version: 'v0.15.0'
 # Verificar a nomenclatura e alterar a variável antes de iniciar o playbook
 yq_version: '3.4.1'
 yq_binary: 'yq_linux_amd64'
+
+# ZSH
+zsh_install: 'yes'
