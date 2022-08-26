@@ -88,6 +88,10 @@ Informações Importantes
 - Possivelmente haverá alguns bugs, necessidade de melhoria de código, então, sinta-se à vontade para corrigí-los; Juntos podemos deixá-lo melhor e mais eficiente.
 - **Não esqueça do seu PR após alteração relevante**. :wink:
 
+Comportamentos conhecidos
+-------
+
+- Algumas vezes, durante a instalação dos plugins do VSCode o servidor dá timeout, a suspeita é que isso ocorra devido ao número de requisições, mas basta executar o playbook com essa tarefa apenas que a instalação ocorrerá tranquilamente.
 
 Licença de uso
 ------------------
