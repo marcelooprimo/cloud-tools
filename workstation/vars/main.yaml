@@ -16,7 +16,7 @@ docker_machine: 'no'
 
 # Golang
 golang_dir: '/usr/local/go'
-golang_version: '1.19'
+golang_version: '1.20.1'
 
 # Home do Usuario
 home_user: '/home/{{ ansible_user_id }}'
@@ -25,7 +25,13 @@ home_user: '/home/{{ ansible_user_id }}'
 user_id: '{{ ansible_user_id }}'
 
 # Helm
-helm_package: 'helm=3.9.3-1'
+helm_package: 'helm=3.11.1-1'
+
+# Helm Diff version
+helm_diff: 'v3.6.0'
+
+# Helm Secrets version
+helm_secrets: 'v4.4.0'
 
 # Helm Docs
 helm_docs_version: '1.11.0'
@@ -42,10 +48,10 @@ jj_version: '1.9.2'
 krew_package: 'krew-linux_amd64'
 
 # KubeFWD
-kubefwd_version: '1.22.3'
+kubefwd_version: '1.22.4'
 
 # Kubepug
-kubepug_version: 'v1.3.4'
+kubepug_version: 'v1.4.0'
 
 # Terraform docs
 terraform_docs_version: 'v0.16.0'
