@@ -25,7 +25,13 @@ home_user: '/home/{{ ansible_user_id }}'
 user_id: '{{ ansible_user_id }}'
 
 # Helm
-helm_package: 'helm=3.11.1'
+helm_package: 'helm=3.11.1-1'
+
+# Helm Diff version
+helm_diff: 'v3.6.0'
+
+# Helm Secrets version
+helm_secrets: 'v4.4.0'
 
 # Helm Docs
 helm_docs_version: '1.11.0'
