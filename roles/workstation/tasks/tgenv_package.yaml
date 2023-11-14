@@ -1,31 +1,31 @@
 # Clona o repositório do tgenv
 - name: Cloning git tgenv repository
   git:
-    repo: 'https://github.com/cunymatthieu/tgenv'
-    dest: '{{ home_user }}/.tgenv'
+    repo: "https://github.com/cunymatthieu/tgenv"
+    dest: "{{ home_user }}/.tgenv"
 
 # lista os arquivos do diretorio
 - name: Listing bin files in tgenv folder
   find:
-    paths: '{{ home_user }}/.tgenv/bin'
+    paths: "{{ home_user }}/.tgenv/bin"
   register: find
 
 # Cria os links simbólicos
 - name: Creating tgenv bin link
   become: true
   file:
-    src: '{{ item.path }}'
-    dest: '/usr/local/bin/{{ item.path | basename }}'
+    src: "{{ item.path }}"
+    dest: "/usr/local/bin/{{ item.path | basename }}"
     state: link
-  loop: '{{ find.files }}'
+  loop: "{{ find.files }}"
 
 # Altera o link para aumentar o escopo da busca
 # na api do github https://github.com/cunymatthieu/tgenv/blob/master/libexec/tgenv-list-remote#L12
 - name: Fix github api link
   copy:
-    src: '{{ role_path }}/files/tgenv-list-remote'
-    dest: '{{ home_user }}/.tgenv/libexec/tgenv-list-remote'
-    mode: '0755'
+    src: "{{ role_path }}/files/tgenv-list-remote"
+    dest: "{{ home_user }}/.tgenv/libexec/tgenv-list-remote"
+    mode: "0755"
 
 # Instala as versões do terraform
 - name: Installing terragrunt versions
@@ -34,4 +34,4 @@
   loop:
     - 0.21.12
     - 0.23.23
-    - 0.38.6
+    - 0.53.3

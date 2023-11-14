@@ -2,14 +2,14 @@
 - name: Install docker key
   become: true
   apt_key:
-    url: 'https://download.docker.com/linux/ubuntu/gpg'
+    url: "https://download.docker.com/linux/ubuntu/gpg"
     state: present
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
 - name: Install docker repository Ubuntu
   become: true
   apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
     filename: docker-ce
   when: ansible_distribution == 'Ubuntu'
@@ -18,7 +18,7 @@
 - name: Install docker repository Mint
   become: true
   apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable'
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
     state: present
     filename: docker-ce
   when: ansible_distribution == 'Linux Mint' and ansible_distribution_major_version == '21'
@@ -28,7 +28,7 @@
   become: true
   apt:
     update_cache: yes
-    pkg: 
+    pkg:
       - docker-ce
       - docker-ce-cli
       - containerd.io
@@ -37,32 +37,32 @@
 # Adiciona o usuário ao grupo docker
 - name: Adding existing user to group Docker
   become: true
-  user: 
-    name: '{{ ansible_user_id }}'
-    groups: docker 
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
     append: yes
 
 # docker machine
 - name: Copy Docker Machine from git
   become: true
   shell:
-    cmd: 'curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-$(uname -s)-$(uname -m) > /tmp/docker-machine'
-  when: '{{ docker_machine is match("yes") }}'
+    cmd: "curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-$(uname -s)-$(uname -m) > /tmp/docker-machine"
+  when: 'docker_machine | match("yes")'
 
 # Altera as permissões
 - name: Changing permission of docker machine file
   become: true
   file:
     path: /tmp/docker-machine
-    mode: '0755'
-  when: '{{ docker_machine is match("yes") }}'
+    mode: "0755"
+  when: 'docker_machine | match("yes")'
 
 # move o arquivo docker-machine para o destino
 - name: Moving docker-machine file
   become: true
   shell:
-    cmd: 'mv /tmp/docker-machine /usr/local/bin/docker-machine'
-  when: '{{ docker_machine is match("yes") }}'
+    cmd: "mv /tmp/docker-machine /usr/local/bin/docker-machine"
+  when: 'docker_machine | match("yes")'
 
 # Adiciona o usuário ao grupo docker
 - name: Append docker group for {{ user_id }}
