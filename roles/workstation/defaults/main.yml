@@ -26,7 +26,7 @@ home_user: "/home/{{ ansible_user_id }}"
 user_id: "{{ ansible_user_id }}"
 
 # Helm
-helm_package: "helm=3.13.2"
+helm_package: "helm=3.13.2-1"
 
 # Helm Diff version
 helm_diff: "v3.8.1"
