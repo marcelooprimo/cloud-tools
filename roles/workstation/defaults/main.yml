@@ -65,4 +65,6 @@ yq_version: "3.4.1"
 yq_binary: "yq_linux_amd64"
 
 # ZSH
-zsh_install: "yes"
+powerlevel10k: "yes"
+powerlevel10k_default: "yes"
+zsh_install: "no"
