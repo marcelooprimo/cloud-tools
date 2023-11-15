@@ -5,51 +5,51 @@
     url: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
     dest: "/tmp/install_ohmyzsh.sh"
     mode: "0755"
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Execute Oh-My-Zsh Installer
   command: "/tmp/install_ohmyzsh.sh"
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Changing Default Shell to ZSH
   become: true
   user:
     name: "{{ ansible_user_id }}"
     shell: /bin/zsh
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Adding powerlevel10k theme
   git:
     repo: "https://github.com/romkatv/powerlevel10k.git"
     dest: "{{ home_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
-  when: 'powerlevel10k == "yes" and zsh_install == "yes"'
+  when: powerlevel10k == "yes" and zsh_install == "yes"
 
 - name: Changing Default ZSH Theme to powerlevel10k
   lineinfile:
     path: "{{ home_user }}/.zshrc"
     regexp: "^ZSH_THEME="
     line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
-  when: 'powerlevel10k_default == "yes" and zsh_install == "yes"'
+  when: powerlevel10k_default == "yes" and zsh_install == "yes"
 
 - name: Adding zsh-autosuggestions
   git:
     repo: "https://github.com/zsh-users/zsh-autosuggestions"
     dest: "{{ home_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Enabling zsh-autosuggestions
   lineinfile:
     path: "{{ home_user }}/.zshrc"
     regexp: "^plugins="
     line: "plugins=(git zsh-autosuggestions)"
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Enabling Autorehash
   lineinfile:
     path: "{{ home_user }}/.zshrc"
     insertafter: "^# User"
     line: "\n# Persistent rehash\nzstyle ':completion:*' rehash true"
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Configuring Tilix - creating symbolic link
   become: true
@@ -64,14 +64,14 @@
     path: "{{ home_user }}/.zshrc"
     line: "if [ $TILIX_ID ] || [ $VTE_VERSION ]; then source /etc/profile.d/vte.sh; fi"
     state: present
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Adding autoload to compinit
   lineinfile:
     path: "{{ home_user }}/.zshrc"
     line: "autoload -U compinit && compinit"
     state: present
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 # Instala as fontes necessárias
 - name: Installing MesloLGS Regular
@@ -80,7 +80,7 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Installing MesloLGS Bold
   become: true
@@ -88,7 +88,7 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Installing MesloLGS Italic
   become: true
@@ -96,7 +96,7 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
 
 - name: Installing MesloLGS Bold Italic
   become: true
@@ -104,4 +104,4 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: 'zsh_install == "yes"'
+  when: zsh_install == "yes"
