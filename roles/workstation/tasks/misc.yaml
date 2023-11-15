@@ -48,12 +48,13 @@
   check_mode: true
   register: bash_alias
 
-- name: Checking custom aliases in bashrc
+- name: Checking custom aliases in zshrc
   lineinfile:
     path: "{{ home_user }}/.zshrc"
     line: "# Custom Aliases"
   check_mode: true
   register: zsh_alias
+  when: zshrc.stat.exists
 
 - name: Append custom aliases at .bashrc file
   shell:
