@@ -47,7 +47,7 @@
   become: true
   shell:
     cmd: "curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-$(uname -s)-$(uname -m) > /tmp/docker-machine"
-  when: 'docker_machine | match("yes")'
+  when: 'docker_machine == "yes"'
 
 # Altera as permissões
 - name: Changing permission of docker machine file
@@ -55,14 +55,14 @@
   file:
     path: /tmp/docker-machine
     mode: "0755"
-  when: 'docker_machine | match("yes")'
+  when: 'docker_machine == "yes"'
 
 # move o arquivo docker-machine para o destino
 - name: Moving docker-machine file
   become: true
   shell:
     cmd: "mv /tmp/docker-machine /usr/local/bin/docker-machine"
-  when: 'docker_machine | match("yes")'
+  when: 'docker_machine == "yes"'
 
 # Adiciona o usuário ao grupo docker
 - name: Append docker group for {{ user_id }}
