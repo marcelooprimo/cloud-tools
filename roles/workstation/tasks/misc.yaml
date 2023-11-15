@@ -59,9 +59,9 @@
 - name: Append custom aliases at .bashrc file
   shell:
     cmd: "cat {{ role_path }}/files/aliases >> ~/.bashrc"
-  when: bashrc.stat.exists and bash_alias.changed | match('True')
+  when: bashrc.stat.exists and bool(bash_alias.changed)
 
 - name: Append custom aliases at .zshrc file
   shell:
     cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
-  when: zshrc.stat.exists and zsh_alias.changed | match('True')
+  when: zshrc.stat.exists and bool(zsh_alias.changed)
