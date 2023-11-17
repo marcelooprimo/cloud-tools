@@ -35,40 +35,50 @@ Este projeto possui a seguinte estrutura de diretórios:
 ```sh
 cloud-tools
 ├── LICENSE
-├── playbook-main.yaml
 ├── README.md
-└── workstation
-    ├── files
-    │   ├── aliases
-    │   ├── shellcheck_install.sh
-    │   ├── sops_install.sh
-    │   ├── sync_git.sh
-    │   └── tgenv-list-remote
-    ├── tasks
-    │   ├── aws_package.yaml
-    │   ├── bat_package.yaml
-    │   ├── docker_package.yaml
-    │   ├── gcloud_package.yaml
-    │   ├── golang_package.yaml
-    │   ├── helm_docs_package.yaml
-    │   ├── helmfile_package.yaml
-    │   ├── helm_package.yaml
-    │   ├── jj_package.yaml
-    │   ├── k8splugins_package.yaml
-    │   ├── krew_package.yaml
-    │   ├── kubectl_package.yaml
-    │   ├── kubectx_kubens_package.yaml
-    │   ├── main.yaml
-    │   ├── misc.yaml
-    │   ├── os_packages.yaml
-    │   ├── terraformdocs_package.yaml
-    │   ├── tfenv_package.yaml
-    │   ├── tgenv_package.yaml
-    │   ├── vscode.yaml
-    │   ├── yq_package.yaml
-    │   └── zsh_package.yaml
-    └── vars
-        └── main.yaml
+├── inventories
+│   └── inventory.yaml
+├── library
+├── module_utils
+├── playbook-main.yaml
+└── roles
+    └── workstation
+        ├── README.md
+        ├── defaults
+        │   └── main.yml
+        ├── files
+        │   ├── aliases
+        │   ├── shellcheck_install.sh
+        │   ├── sops_install.sh
+        │   ├── sync_git.sh
+        │   └── tgenv-list-remote
+        ├── meta
+        │   └── main.yml
+        ├── tasks
+        │   ├── aws_package.yaml
+        │   ├── bat_package.yaml
+        │   ├── docker_package.yaml
+        │   ├── gcloud_package.yaml
+        │   ├── golang_package.yaml
+        │   ├── helm_docs_package.yaml
+        │   ├── helm_package.yaml
+        │   ├── helmfile_package.yaml
+        │   ├── jj_package.yaml
+        │   ├── k8splugins_package.yaml
+        │   ├── krew_package.yaml
+        │   ├── kubectl_package.yaml
+        │   ├── kubectx_kubens_package.yaml
+        │   ├── main.yaml
+        │   ├── misc.yaml
+        │   ├── os_packages.yaml
+        │   ├── terraformdocs_package.yaml
+        │   ├── tfenv_package.yaml
+        │   ├── tgenv_package.yaml
+        │   ├── vscode.yaml
+        │   ├── yq_package.yaml
+        │   └── zsh_package.yaml
+        └── vars
+            └── main.yaml
 
 ```
 
