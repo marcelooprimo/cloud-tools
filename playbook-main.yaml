@@ -1,6 +1,5 @@
 ---
 - name: Preparing Workstation
-  hosts: localhost
-  connection: local
+  hosts: all
   roles:
     - workstation
