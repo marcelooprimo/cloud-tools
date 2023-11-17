@@ -1,23 +1,23 @@
 # Clona o repositório do tfenv
 - name: Cloning git tfenv repository
   git:
-    repo: 'https://github.com/tfutils/tfenv'
-    dest: '{{ home_user }}/.tfenv'
+    repo: "https://github.com/tfutils/tfenv"
+    dest: "{{ home_user }}/.tfenv"
 
 # lista os arquivos do diretorio
 - name: Listing bin files in tfenv folder
   find:
-    paths: '{{ home_user }}/.tfenv/bin'
+    paths: "{{ home_user }}/.tfenv/bin"
   register: find
 
 # Cria os links simbólicos
 - name: Creating tfenv bin link
   become: true
   file:
-    src: '{{ item.path }}'
-    dest: '/usr/local/bin/{{ item.path | basename }}'
+    src: "{{ item.path }}"
+    dest: "/usr/local/bin/{{ item.path | basename }}"
     state: link
-  loop: '{{ find.files }}'
+  loop: "{{ find.files }}"
 
 # Instala as versões do terraform
 - name: Installing terraform versions
@@ -27,4 +27,4 @@
     - 0.11.15
     - 0.12.31
     - 0.13.7
-    - 1.2.6
+    - 1.5.7

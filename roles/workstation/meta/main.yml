@@ -1,0 +1,29 @@
+galaxy_info:
+  author: Marcelo Primo
+  description: Prepare workstation with devops tools.
+  company: No company
+
+  license: GPL
+
+  min_ansible_version: "2.9"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "jammy"
+    - name: Linux Mint
+      versions:
+        - "victoria"
+        - "vera"
+        - "vanessa"
+
+  galaxy_tags:
+    - Terraform
+    - Terragrunt
+    - aws-cli
+    - kubectl
+    - helm
+    - golang
+    - sops
+
+dependencies: []
