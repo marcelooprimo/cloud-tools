@@ -16,7 +16,7 @@ sudo apt install ansible git
 Para executar basta digitar o comando abaixo:
 
 ```sh
-ansible-playbook playbook-main.yaml --ask-become-pass
+ansible-playbook playbook-main.yaml -i inventories/inventory.yaml --ask-become-pass
 ```
 
 Variáveis
