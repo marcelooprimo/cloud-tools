@@ -1,0 +1,17 @@
+- name: Install asdf
+  shell:
+    cmd: |
+      git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch {{asdf_version}}
+  when: asdf_install == 'yes'
+
+- name: Add asdf to PATH
+  shell:
+    cmd: |
+      echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
+  when: asdf_install == 'yes'
+
+- name: Add completions
+  shell:
+    cmd: |
+      echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
+  when: asdf_install == 'yes'
