@@ -3,6 +3,10 @@
 # PATH final com todos apps instalados (copiados de um hosts já configurado)
 app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx"'
 
+# ASDF
+asdf_install: "yes"
+asdf_version: "v0.13.1"
+
 # AWS modo de instalação, opção pip ou apt
 awscli_install_mode: "pip"
 
@@ -56,6 +60,9 @@ kubepug_version: "v1.4.0"
 
 # Terraform docs
 terraform_docs_version: "v0.16.0"
+
+# Trivy
+trivy_install: "yes"
 
 # YQ
 # Nota: As versões 4.1.0 e recentes possuem a letra v antes do número da versão
