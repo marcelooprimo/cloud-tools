@@ -1,17 +1,47 @@
 - name: Install asdf
-  shell:
-    cmd: |
-      git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch {{asdf_version}}
+  git:
+    repo: https://github.com/asdf-vm/asdf.git
+    dest: "{{ home_user }}/.asdf"
+    version: "{{ asdf_version }}"
+    update: yes
   when: asdf_install == 'yes'
 
-- name: Add asdf to PATH
-  shell:
-    cmd: |
-      echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
-  when: asdf_install == 'yes'
+- name: Check if bashrc exists
+  stat:
+    path: "{{ home_user }}/bashrc"
+  register: bashrc
 
-- name: Add completions
-  shell:
-    cmd: |
-      echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
-  when: asdf_install == 'yes'
+- name: Check if zshrc exists
+  stat:
+    path: "{{ home_user }}/.zshrc"
+  register: zshrc
+
+- name: Add asdf to PATH (.bashrc)
+  lineinfile:
+    path: "{{ home_user }}/.bashrc"
+    line: ". $HOME/.asdf/asdf.sh"
+  when: asdf_install == 'yes' and bashrc.stat.exists
+
+- name: Add completions (.bashrc)
+  lineinfile:
+    path: "{{ home_user }}/.bashrc"
+    line: ". $HOME/.asdf/completions/asdf.bash"
+  when: asdf_install == 'yes' and bashrc.stat.exists
+
+- name: Add asdf to PATH (.zshrc)
+  lineinfile:
+    path: "{{ home_user }}/.zshrc"
+    line: ". $HOME/.asdf/asdf.sh"
+  when: asdf_install == 'yes' and zshrc.stat.exists
+
+- name: Add completions (.zshrc)
+  blockinfile:
+    path: "{{ home_user }}/.zshrc"
+    block: |
+      # append completions to fpath
+      fpath=(${ASDF_DIR}/completions $fpath)
+
+      # initialise completions with ZSH's compinit
+      autoload -Uz compinit && compinit
+    create: yes
+  when: asdf_install == 'yes' and zshrc.stat.exists
