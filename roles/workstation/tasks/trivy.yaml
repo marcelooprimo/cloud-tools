@@ -28,7 +28,7 @@
 - name: Installing trivy package
   become: true
   apt:
-    update_cache: yes
+    update_cache: true
     name: "trivy"
     state: latest
   when: trivy_install == 'yes'

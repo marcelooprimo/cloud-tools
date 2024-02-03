@@ -2,6 +2,6 @@
 - name: Downloading JJ
   become: true
   unarchive:
-    src: 'https://github.com/tidwall/jj/releases/download/v{{ jj_version }}/jj-{{ jj_version }}-linux-amd64.tar.gz'
-    dest: '/usr/local/bin'
-    remote_src: yes
+    src: "https://github.com/tidwall/jj/releases/download/v{{ jj_version }}/jj-{{ jj_version }}-linux-amd64.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: true

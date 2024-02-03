@@ -20,7 +20,6 @@ iam_auth_version: "0.6.11"
 docker_machine: "no"
 
 # Golang
-golang_dir: "/usr/local/go"
 golang_version: "1.21.4"
 
 # Home do Usuario

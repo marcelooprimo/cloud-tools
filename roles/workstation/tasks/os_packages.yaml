@@ -1,57 +1,66 @@
 # O Linux mint não tem suporte a snap
 # e para instalar é preciso remover
 # o arquivo nosnap que está em preferences.d
-- name: Moving nosnap file
+- name: Backup of nosnap file
   ignore_errors: true
   become: true
-  shell:
-    cmd: 'mv /etc/apt/preferences.d/nosnap.pref ~/nosnap.backup'
+  copy:
+    src: /etc/apt/preferences.d/nosnap.pref
+    dest: ~/nosnap.backup
+    mode: 0644
+  when: ansible_distribution == 'Linux Mint'
+
+- name: Removing nosnap file
+  ignore_errors: true
+  become: true
+  file:
+    path: /etc/apt/preferences.d/nosnap.pref
+    state: absent
   when: ansible_distribution == 'Linux Mint'
 
 - name: Install OS packages
   become: true
   apt:
-    update_cache: yes
-    install_recommends: yes
+    update_cache: true
+    install_recommends: true
     pkg:
-    - apt-transport-https
-    - bash-completion
-    - build-essential
-    - ca-certificates
-    - curl
-    - default-jdk
-    - elinks
-    - fzf
-    - gnupg
-    - htop 
-    - jq
-    - lsb-release
-    - meld
-    - mlocate
-    - mtr
-    - mysql-client
-    - netcat
-    - net-tools
-    - openssl
-    - p7zip-full
-    - p7zip-rar
-    - python3-pip
-    - python3.10
-    - python3.10-venv
-    - redis-tools
-    - snapd
-    - tcpdump
-    - telnet 
-    - tilix
-    - traceroute 
-    - tree
-    - vim 
-    - virtualbox
-    - wget
-    - whois
-    - wireshark
-    - zsh
-
+      - apt-transport-https
+      - bash-completion
+      - build-essential
+      - ca-certificates
+      - curl
+      - default-jdk
+      - elinks
+      - fzf
+      - gnupg
+      - htop
+      - jq
+      - lsb-release
+      - meld
+      - mlocate
+      - mtr
+      - mysql-client
+      - netcat
+      - net-tools
+      - openssl
+      - p7zip-full
+      - p7zip-rar
+      - python3-pip
+      - python3.10
+      - python3.10-venv
+      - redis-tools
+      - snapd
+      - tcpdump
+      - telnet
+      - tilix
+      - traceroute
+      - tree
+      - vim
+      - virtualbox
+      - wget
+      - whois
+      - wireshark
+      - zsh
 
 # Executa o comando:
 # update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1

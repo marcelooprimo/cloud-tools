@@ -3,9 +3,9 @@
   unarchive:
     src: https://github.com/kubernetes-sigs/krew/releases/latest/download/{{ krew_package }}.tar.gz
     dest: /tmp/
-    remote_src: yes
+    remote_src: true
 
 # Instala o krew
 - name: Installing Krew
   shell:
-    cmd: '/tmp/{{ krew_package }} install krew'
+    cmd: "/tmp/{{ krew_package }} install krew"

@@ -1,20 +1,21 @@
 # Verifica se o diretório do go existe
 - name: Check golang dir
-  stat: 
-    path: '/usr/local/go'
+  stat:
+    path: "/usr/local/go"
   register: go_dir
 
 # Remove o diretorio do golang
 - name: Remove Golang directory
   become: true
-  shell:
-    cmd: 'rm -rf {{ golang_dir }}'
+  file:
+    path: "/usr/local/go"
+    state: absent
   when: go_dir.stat.exists
 
 # Instala o go
 - name: Installing golang
   become: true
   unarchive:
-    src: 'https://go.dev/dl/go{{ golang_version }}.linux-amd64.tar.gz'
-    dest: '/usr/local'
-    remote_src: yes
+    src: "https://go.dev/dl/go{{ golang_version }}.linux-amd64.tar.gz"
+    dest: "/usr/local"
+    remote_src: true
