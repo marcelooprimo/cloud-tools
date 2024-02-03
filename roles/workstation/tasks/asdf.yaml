@@ -8,7 +8,7 @@
 
 - name: Check if bashrc exists
   stat:
-    path: "{{ home_user }}/bashrc"
+    path: "{{ home_user }}/.bashrc"
   register: bashrc
 
 - name: Check if zshrc exists
