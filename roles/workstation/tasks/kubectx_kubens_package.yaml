@@ -2,15 +2,15 @@
 - name: Cloning git kubectx repository
   become: true
   git:
-    repo: 'https://github.com/ahmetb/kubectx'
-    dest: '/opt/kubectx'
+    repo: "https://github.com/ahmetb/kubectx"
+    dest: "/opt/kubectx"
 
 # Cria os links simbólicos
 - name: Creating kubectx and kubens link
   become: true
   file:
-    src: '/opt/kubectx/{{ item }}'
-    dest: '/usr/local/bin/{{ item }}'
+    src: "/opt/kubectx/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
     state: link
   loop:
     - kubectx
@@ -19,22 +19,22 @@
 # copia zsh completions
 - name: check if Oh-My-zsh completion folder exist
   stat:
-    path: '{{ home_user }}/.oh-my-zsh/completions'
+    path: "{{ home_user }}/.oh-my-zsh/completions"
   register: zsh_completion
 
 # se não existir cria o diretório
 - name: Creating completions for Oh-My-zsh
   file:
-    path: '{{ home_user }}/.oh-my-zsh/completions'
+    path: "{{ home_user }}/.oh-my-zsh/completions"
     state: directory
-    mode: '0755'
+    mode: "0755"
   when: not zsh_completion.stat.exists
 
 # Cria um link dos arquivos de completion para o zsh
 - name: Creating completions link
   file:
-    src: '/opt/kubectx/completion/{{ item }}'
-    dest: '{{ home_user }}/.oh-my-zsh/completions/{{ item }}'
+    src: "/opt/kubectx/completion/{{ item }}"
+    dest: "{{ home_user }}/.oh-my-zsh/completions/{{ item }}"
     state: link
   loop:
     - _kubectx.zsh
