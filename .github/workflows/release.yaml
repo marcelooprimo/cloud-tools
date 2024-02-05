@@ -6,10 +6,11 @@ on:
     branches:
       - main
     paths:
-      - '**/*.sh'
-      - '.pre-commit-*.yaml'
+      - "roles/workstation/**/*.yaml"
+      - "playbook-*.yaml"
+      - "inventories/*.yaml"
       # Ignore paths
-      - '!.gitignore'
+      - "!.gitignore"
 jobs:
   release:
     name: Release
@@ -30,4 +31,3 @@ jobs:
             @semantic-release/git@10.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
