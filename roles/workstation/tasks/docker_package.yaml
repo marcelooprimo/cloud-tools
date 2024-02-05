@@ -27,7 +27,7 @@
 - name: Install Docker
   become: true
   apt:
-    update_cache: yes
+    update_cache: true
     pkg:
       - docker-ce
       - docker-ce-cli
@@ -40,13 +40,14 @@
   user:
     name: "{{ ansible_user_id }}"
     groups: docker
-    append: yes
+    append: true
 
 # docker machine
 - name: Copy Docker Machine from git
   become: true
-  shell:
-    cmd: "curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-$(uname -s)-$(uname -m) > /tmp/docker-machine"
+  get_url:
+    url: " https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-$(uname -s)-$(uname -m)"
+    dest: /tmp/docker-machine
   when: 'docker_machine == "yes"'
 
 # Altera as permissões
@@ -70,4 +71,4 @@
   user:
     name: "{{ user_id }}"
     groups: docker
-    append: yes
+    append: true

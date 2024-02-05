@@ -25,6 +25,8 @@
 - import_tasks: tgenv_package.yaml
 - import_tasks: terraformdocs_package.yaml
 # Misc
+- import_tasks: trivy.yaml
+- import_tasks: asdf.yaml
 - import_tasks: yq_package.yaml
 - import_tasks: jj_package.yaml
 - import_tasks: bat_package.yaml

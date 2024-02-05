@@ -10,7 +10,7 @@
 - name: Add k8s repository
   become: true
   apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main'
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
     filename: kubernetes
 
@@ -18,5 +18,5 @@
 - name: Installing kubectl package
   become: true
   apt:
-    update_cache: yes
-    name: 'kubectl'
+    update_cache: true
+    name: "kubectl"

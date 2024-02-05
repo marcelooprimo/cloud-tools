@@ -17,15 +17,15 @@
 - name: Installing Helm package
   become: true
   apt:
-    update_cache: yes
+    update_cache: true
     name: "{{ helm_package }}"
 
 # Adiciona o Helm Diff
 - name: Add Helm Diff
   shell:
-    cmd: "helm plugin install https://github.com/databus23/helm-diff --version {{helm_diff}}"
+    cmd: "helm plugin install https://github.com/databus23/helm-diff --version {{ helm_diff }}"
 
 # Adiciona o Helm Secrets
 - name: Add Helm Secrets
   shell:
-    cmd: "helm plugin install https://github.com/jkroepke/helm-secrets --version {{helm_secrets}}"
+    cmd: "helm plugin install https://github.com/jkroepke/helm-secrets --version {{ helm_secrets }}"
