@@ -18,9 +18,9 @@ galaxy_info:
         - "vanessa"
 
   galaxy_tags:
-    - Terraform
-    - Terragrunt
-    - aws-cli
+    - terraform
+    - terragrunt
+    - awscli
     - kubectl
     - helm
     - golang

@@ -59,9 +59,33 @@
 - name: Append custom aliases at .bashrc file
   shell:
     cmd: "cat {{ role_path }}/files/aliases >> ~/.bashrc"
-  when: bashrc.stat.exists and bash_alias.changed == true
+  when: bashrc.stat.exists and bash_alias.changed
 
 - name: Append custom aliases at .zshrc file
   shell:
     cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
-  when: zshrc.stat.exists and zsh_alias.changed == true
+  when: zshrc.stat.exists and zsh_alias.changed
+
+# Kontena lens
+- name: Installing Kontena lens
+  become: true
+  shell:
+    cmd: "snap install kontena-lens --classic"
+
+# Postman
+- name: Installing Postman
+  become: true
+  shell:
+    cmd: "snap install postman"
+
+# Shellcheck
+- name: Installing Shellchek
+  become: true
+  shell:
+    cmd: "{{ role_path }}/files/shellcheck_install.sh"
+
+# SOPS
+- name: Installing SOPS
+  become: true
+  shell:
+    cmd: "{{ role_path }}/files/sops_install.sh"

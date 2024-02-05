@@ -1,20 +1,19 @@
 - name: Add GCloud key
   become: true
   apt_key:
-    url: 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+    url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
     keyring: /usr/share/keyrings/cloud.google.gpg
     state: present
 
 - name: Add GCloud repository
   become: true
   apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main'
+    repo: "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main"
     state: present
     filename: google-cloud-sdk
 
 - name: Installing GCloud tool
   become: true
   apt:
-    update_cache: yes
+    update_cache: true
     name: google-cloud-sdk
-

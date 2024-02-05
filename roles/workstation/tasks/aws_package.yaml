@@ -2,7 +2,7 @@
 - name: Installing AWS CLI via APT
   become: true
   apt:
-    install_recommends: yes
+    install_recommends: true
     name: awscli
   when: awscli_install_mode == "apt" and awscli_version == "v1"
 
@@ -17,7 +17,7 @@
   unarchive:
     src: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
     dest: "/tmp/"
-    remote_src: yes
+    remote_src: true
     creates: "/tmp/aws"
   when: awscli_version == "v2"
 
@@ -33,7 +33,7 @@
     path: "{{ home_user }}/.bashrc"
   register: bashrc
 
-- name: Append alias at .bashrc file
+- name: Append AWS CLI V1 PIP version alias to the .bashrc file.
   lineinfile:
     path: "{{ home_user }}/.bashrc"
     line: 'alias aws="python -m awscli"'
@@ -45,7 +45,7 @@
     path: "{{ home_user }}/.zshrc"
   register: zshrc
 
-- name: Append alias at .zshrc file
+- name: Append AWS CLI V1 PIP version alias to the .zshrc file.
   lineinfile:
     path: "{{ home_user }}/.zshrc"
     line: 'alias aws="python -m awscli"'
