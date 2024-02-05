@@ -1,5 +1,5 @@
 <!--
-Thank you for helping to improve pre-commit-terraform!
+Thank you for helping to improve cloud-tools!
 -->
 
 Put an `x` into the box if that apply:
@@ -8,6 +8,7 @@ Put an `x` into the box if that apply:
 - [ ] This PR fixes a bug.
 - [ ] This PR adds new functionality.
 - [ ] This PR enhances existing functionality.
+- [ ] This PR is for documentation adjustments and improvements.
 
 ### Description of your changes
 
@@ -15,7 +16,7 @@ Put an `x` into the box if that apply:
 Briefly describe what this pull request does. Be sure to direct your reviewers'
 attention to anything that needs special consideration.
 
-We love pull requests that resolve an open pre-commit-terraform issue. If yours does, you
+We love pull requests that resolve an open cloud-tools issue. If yours does, you
 can uncomment the below line to indicate which issue your PR fixes, for example
 "Fixes #123456":
 -->
