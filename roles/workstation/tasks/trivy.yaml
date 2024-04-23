@@ -1,8 +1,8 @@
 - name: Add Trivy Key
   become: true
-  apt_key:
+  get_url:
     url: https://aquasecurity.github.io/trivy-repo/deb/public.key
-    keyring: /usr/share/keyrings/trivy.gpg
+    dest: /usr/share/keyrings/trivy.gpg
     state: present
   when: trivy_install == 'yes'
 

@@ -20,7 +20,7 @@ iam_auth_version: "0.6.11"
 docker_machine: "no"
 
 # Golang
-golang_version: "1.21.4"
+golang_version: "1.22.2"
 
 # Home do Usuario
 home_user: "/home/{{ ansible_user_id }}"
@@ -57,11 +57,17 @@ kubefwd_version: "1.22.5"
 # Kubepug
 kubepug_version: "v1.4.0"
 
+# Kubectl
+kubectl_version: "1.29.4"
+
 # Terraform docs
 terraform_docs_version: "v0.16.0"
 
 # Trivy
 trivy_install: "yes"
+
+# VSCode
+install_vscode_plugins: "yes"
 
 # YQ
 # Nota: As versões 4.1.0 e recentes possuem a letra v antes do número da versão

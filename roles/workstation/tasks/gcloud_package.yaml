@@ -1,9 +1,10 @@
 - name: Add GCloud key
   become: true
-  apt_key:
+  get_url:
     url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-    keyring: /usr/share/keyrings/cloud.google.gpg
-    state: present
+    dest: /usr/share/keyrings/cloud.google.gpg
+    mode: "0644"
+    force: yes
 
 - name: Add GCloud repository
   become: true
