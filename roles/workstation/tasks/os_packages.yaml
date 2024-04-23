@@ -43,6 +43,7 @@
       - netcat
       - net-tools
       - openssl
+      - pass
       - p7zip-full
       - p7zip-rar
       - python3-pip

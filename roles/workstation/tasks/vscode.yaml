@@ -1,14 +1,16 @@
 # Instalação do VSCode
 - name: Install Microsoft Key
   become: true
-  apt_key:
+  get_url:
     url: "https://packages.microsoft.com/keys/microsoft.asc"
-    state: present
+    dest: "/usr/share/keyrings/microsoft.asc"
+    mode: 0644
+    force: yes
 
 - name: Install VSCode Repository
   become: true
   apt_repository:
-    repo: "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/vscode stable main"
     state: present
     filename: vscode
 
@@ -49,3 +51,4 @@
     - bierner.markdown-emoji
     - ms-toolsai.jupyter
     - redhat.ansible
+  when: install_vscode_plugins == 'yes'
