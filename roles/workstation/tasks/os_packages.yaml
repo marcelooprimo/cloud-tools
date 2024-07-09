@@ -40,7 +40,6 @@
       - locate
       - mtr
       - mysql-client
-      - netcat
       - net-tools
       - openssl
       - pass
