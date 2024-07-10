@@ -12,7 +12,7 @@
 # Google Cloud
 #- import_tasks: gcloud_package.yaml
 # ASDF
-- import_tasks: asdf.yaml
+#- import_tasks: asdf.yaml
 # k8s
 #- import_tasks: kubectx_kubens_package.yaml
 #- import_tasks: krew_package.yaml

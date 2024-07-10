@@ -3,7 +3,8 @@
   get_url:
     url: https://aquasecurity.github.io/trivy-repo/deb/public.key
     dest: /usr/share/keyrings/trivy.asc
-    state: present
+    mode: "0644"
+    force: yes
   when: trivy_install == 'yes'
 
 # cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
