@@ -48,7 +48,7 @@
   when: asdf_install == 'yes' and zshrc.stat.exists
 
 - name: Export ASDF ENV var
-  shell: export ASDF_DIR={{ home_user }}/.asdf
+  shell: export ASDF_DIR="{{ home_user }}/.asdf"
 
 - name: Install kubectl
   shell: |
