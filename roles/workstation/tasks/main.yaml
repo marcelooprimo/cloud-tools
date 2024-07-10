@@ -10,7 +10,7 @@
 # AWS
 #- import_tasks: aws_package.yaml
 # Google Cloud
-- import_tasks: gcloud_package.yaml
+#- import_tasks: gcloud_package.yaml
 # ASDF
 - import_tasks: asdf.yaml
 # k8s
