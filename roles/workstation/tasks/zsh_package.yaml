@@ -80,7 +80,6 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: zsh_install == "yes"
 
 - name: Installing MesloLGS Bold
   become: true
@@ -88,7 +87,6 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: zsh_install == "yes"
 
 - name: Installing MesloLGS Italic
   become: true
@@ -96,7 +94,6 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: zsh_install == "yes"
 
 - name: Installing MesloLGS Bold Italic
   become: true
@@ -104,4 +101,3 @@
     url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
     dest: "/usr/share/fonts/"
     mode: 0664
-  when: zsh_install == "yes"

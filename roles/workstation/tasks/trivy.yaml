@@ -1,28 +1,20 @@
 - name: Add Trivy Key
   become: true
-  apt_key:
+  get_url:
     url: https://aquasecurity.github.io/trivy-repo/deb/public.key
-    keyring: /usr/share/keyrings/trivy.gpg
-    state: present
+    dest: /usr/share/keyrings/trivy.asc
+    mode: "0644"
+    force: yes
   when: trivy_install == 'yes'
 
 # cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
 - name: Add Trivy repository
   become: true
   apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb {{ ansible_distribution_release }} main"
+    repo: "deb [signed-by=/usr/share/keyrings/trivy.asc] https://aquasecurity.github.io/trivy-repo/deb generic main"
     state: present
     filename: trivy.list
-  when: ansible_distribution == 'Ubuntu' and trivy_install == 'yes'
-
-# cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
-- name: Add Trivy repository
-  become: true
-  apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb jammy main"
-    state: present
-    filename: trivy.list
-  when: ansible_distribution == 'Linux Mint' and ansible_distribution_major_version == '21' and trivy_install == 'yes'
+  when: trivy_install == 'yes'
 
 # Instala o trivy
 - name: Installing trivy package

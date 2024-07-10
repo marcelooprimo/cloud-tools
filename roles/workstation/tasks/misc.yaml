@@ -66,12 +66,6 @@
     cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
   when: zshrc.stat.exists and zsh_alias.changed
 
-# Kontena lens
-- name: Installing Kontena lens
-  become: true
-  shell:
-    cmd: "snap install kontena-lens --classic"
-
 # Postman
 - name: Installing Postman
   become: true
