@@ -1,7 +1,7 @@
 ---
 # defaults file for role-teste
 # PATH final com todos apps instalados (copiados de um hosts já configurado)
-app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx"'
+app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx:$HOME/.asdf/shims:$HOME/.asdf/bin"'
 
 # ASDF
 asdf_install: "yes"

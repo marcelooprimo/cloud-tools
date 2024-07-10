@@ -1,8 +1,3 @@
-# Recarrega o shell para refletir a instalação do plugin via asdf
-- name: Reload shell
-  shell:
-    cmd: . {{ home_user }}/.bashrc
-
 # Exporta o $PATH e Instala kubectl tree
 - name: Installing kubectl tree plugin
   shell:
