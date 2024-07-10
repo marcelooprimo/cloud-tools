@@ -1,7 +1,7 @@
 # Clona o repositório do tgenv
 - name: Cloning git tgenv repository
   git:
-    repo: "https://github.com/cunymatthieu/tgenv"
+    repo: "https://github.com/tgenv/tgenv.git"
     dest: "{{ home_user }}/.tgenv"
 
 # lista os arquivos do diretorio
@@ -19,19 +19,9 @@
     state: link
   loop: "{{ find.files }}"
 
-# Altera o link para aumentar o escopo da busca
-# na api do github https://github.com/cunymatthieu/tgenv/blob/master/libexec/tgenv-list-remote#L12
-- name: Fix github api link
-  copy:
-    src: "{{ role_path }}/files/tgenv-list-remote"
-    dest: "{{ home_user }}/.tgenv/libexec/tgenv-list-remote"
-    mode: "0755"
-
 # Instala as versões do terraform
 - name: Installing terragrunt versions
   shell:
     cmd: "tgenv install {{ item }}"
   loop:
-    - 0.21.12
-    - 0.23.23
-    - 0.53.3
+    - 0.55.20

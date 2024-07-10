@@ -28,7 +28,7 @@
     path: "{{ home_user }}/.oh-my-zsh/completions"
     state: directory
     mode: "0755"
-  when: not zsh_completion.stat.exists
+  when: not zsh_completion.stat.exists and zsh_install == "yes"
 
 # Cria um link dos arquivos de completion para o zsh
 - name: Creating completions link
@@ -39,3 +39,4 @@
   loop:
     - _kubectx.zsh
     - _kubens.zsh
+  when: zsh_install == "yes"

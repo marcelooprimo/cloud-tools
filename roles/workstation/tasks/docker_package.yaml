@@ -1,15 +1,14 @@
 # Instala a key do repository docker
 - name: Install docker key
   become: true
-  apt_key:
-    url: "https://download.docker.com/linux/ubuntu/gpg"
-    state: present
+  shell:
+    cmd: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /usr/share/keyrings/docker.asc
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
 - name: Install docker repository Ubuntu
   become: true
   apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
     filename: docker-ce
   when: ansible_distribution == 'Ubuntu'
@@ -18,7 +17,7 @@
 - name: Install docker repository Mint
   become: true
   apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/ubuntu jammy stable"
     state: present
     filename: docker-ce
   when: ansible_distribution == 'Linux Mint' and ansible_distribution_major_version == '21'
