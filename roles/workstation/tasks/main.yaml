@@ -14,8 +14,8 @@
 # ASDF
 - import_tasks: asdf.yaml
 # k8s
-- import_tasks: kubectx_kubens_package.yaml
-- import_tasks: krew_package.yaml
+#- import_tasks: kubectx_kubens_package.yaml
+#- import_tasks: krew_package.yaml
 - import_tasks: k8splugins_package.yaml
 # Helm
 - import_tasks: helm_package.yaml
