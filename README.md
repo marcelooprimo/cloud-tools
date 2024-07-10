@@ -13,6 +13,17 @@ Para executar este playbook é necessário ter instalado o ansible no host. Para
 sudo apt install ansible git
 ```
 
+> Recomendo que utilize a versão mais recente do Ansible, para isso é necessário instalar o Ansible via repositório PPA. Para use os comandos abaixo:
+
+```bash
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+```
+
+> Para mais informações, acesse: https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
+
 Para executar basta digitar o comando abaixo:
 
 ```sh
@@ -85,7 +96,7 @@ cloud-tools
 Quebra de compatibilidade
 -------
 
-> - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04``` e ```Linux Mint 21``` (esta última é uma variante da primeira, então nada muda :wink: ).**
+> - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04```, ```ubuntu 24.04``` e ```Linux Mint 21``` (esta última é uma variante do ubuntu 22.04, então nada muda :wink: ).**
 > - **Para utilizar este playbook, nas versões ```ubuntu 20.04``` e ```Linux Mint 20.3```, baixe a release 1.0.0.**
 
 Informações Importantes
@@ -93,8 +104,7 @@ Informações Importantes
 
 - Este playbook irá instalar o ZShell no host e configurá-lo como padrão com o tema powerlevel10k (Caso não seja seu shell padrão, basta apenas comentar a linha import_task respectiva presente no arquivo ```workstation/tasks/main.yaml```).
 - Há opção de instalar o docker machine, mas é necessário alterar a opção no arquivo ```workstation/vars/main.yaml```
-- O diretório ```workstation/files``` contém alguns scripts importantes e aliases customizados.
-- Ainda no diretório ```workstation/files```, o script `tgenv-list-remote` contém um fix para a paginação dos repositórios do tgenv (atualmente ele lista 2 páginas).
+- O diretório ```workstation/files``` contém alguns scripts importantes e aliases customizados..
 - Possivelmente haverá alguns bugs, necessidade de melhoria de código, então, sinta-se à vontade para corrigí-los; Juntos podemos deixá-lo melhor e mais eficiente.
 - **Não esqueça do seu PR após alteração relevante**. :wink:
 

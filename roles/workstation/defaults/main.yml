@@ -79,4 +79,4 @@ yq_binary: "yq_linux_amd64"
 # ZSH
 powerlevel10k: "yes"
 powerlevel10k_default: "yes"
-zsh_install: "no"
+zsh_install: "yes"
