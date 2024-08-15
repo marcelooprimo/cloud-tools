@@ -25,6 +25,7 @@
     update_cache: true
     cache_valid_time: 3600
     state: latest
+  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
 
 - name: Upgrade OS packages
   become: true
@@ -32,6 +33,7 @@
     upgrade: dist
     update_cache: true
     cache_valid_time: 3600
+  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
 
 - name: Install OS packages
   become: true
@@ -76,3 +78,63 @@
       - whois
       - wireshark
       - zsh
+  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
+
+# Opensuse support
+
+- name: Update all packages to their latest version
+  become: true
+  community.general.zypper:
+    name: "*"
+    update_cache: true
+    state: latest
+  when: ansible_distribution == 'openSUSE Leap'
+
+- name: Upgrade OS packages
+  become: true
+  community.general.zypper:
+    upgrade: dist
+  when: ansible_distribution == 'openSUSE Leap'
+
+- name: Install OS packages
+  become: true
+  community.general.zypper:
+    disable_recommends: false
+    pkg:
+      - apt-transport-https
+      - bash-completion
+      - build-essential
+      - ca-certificates
+      - curl
+      - default-jdk
+      - elinks
+      - fzf
+      - gnupg
+      - htop
+      - jq
+      - lsb-release
+      - meld
+      - locate
+      - mtr
+      - mysql-client
+      - net-tools
+      - openssl
+      - pass
+      - p7zip-full
+      - p7zip-rar
+      - python3-pip
+      - python3
+      - python3-venv
+      - redis-tools
+      - snapd
+      - tcpdump
+      - telnet
+      - tilix
+      - traceroute
+      - tree
+      - vim
+      - wget
+      - whois
+      - wireshark
+      - zsh
+  when: ansible_distribution == 'openSUSE Leap'
