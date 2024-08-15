@@ -105,7 +105,6 @@
       - bash-completion
       - ca-certificates
       - curl
-      - default-jdk
       - elinks
       - fzf
       - gnupg
