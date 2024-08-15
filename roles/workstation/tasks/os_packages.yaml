@@ -90,10 +90,10 @@
     state: latest
   when: ansible_distribution == 'openSUSE Leap'
 
-- name: Upgrade OS packages
-  become: true
+- name: Perform a dist-upgrade
   community.general.zypper:
-    upgrade: dist
+    name: "*"
+    state: dist-upgrade
   when: ansible_distribution == 'openSUSE Leap'
 
 - name: Install OS packages
