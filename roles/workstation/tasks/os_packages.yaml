@@ -92,6 +92,7 @@
 
 - name: Perform a dist-upgrade
   community.general.zypper:
+  become: true
     name: "*"
     state: dist-upgrade
   when: ansible_distribution == 'openSUSE Leap'
