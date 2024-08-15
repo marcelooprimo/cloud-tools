@@ -101,6 +101,7 @@
   become: true
   community.general.zypper:
     disable_recommends: false
+    state: latest
     pkg:
       - bash-completion
       - ca-certificates
@@ -117,7 +118,6 @@
       - net-tools
       - openssl
       - password-store
-      - p7zip-full
       - python3-pip
       - python3
       - python3-virtualenv
