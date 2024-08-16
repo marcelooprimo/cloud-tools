@@ -5,7 +5,7 @@
     dest: /usr/share/keyrings/trivy.asc
     mode: "0644"
     force: yes
-  when: (trivy_install == 'yes') or (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
+  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
 
 # cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
 - name: Add Trivy repository on Ubuntu/Linux Mint
@@ -14,7 +14,7 @@
     repo: "deb [signed-by=/usr/share/keyrings/trivy.asc] https://aquasecurity.github.io/trivy-repo/deb generic main"
     state: present
     filename: trivy.list
-  when: (trivy_install == 'yes') or (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
+  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
 
 # Instala o trivy
 - name: Install Trivy tool on Ubuntu/Linux Mint
@@ -38,7 +38,7 @@
       enabled=1
       gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key
     mode: 0644
-  when: ansible_distribution == "openSUSE Leap"
+  when: trivy_install == 'yes' and ansible_distribution == "openSUSE Leap"
 
 - name: Install Trivy tool on openSUSE
   become: true
@@ -48,4 +48,4 @@
     state: present
     name: trivy
     extra_args_precommand: "--gpg-auto-import-keys"
-  when: ansible_distribution == "openSUSE Leap"
+  when: trivy_install == 'yes' and ansible_distribution == "openSUSE Leap"
