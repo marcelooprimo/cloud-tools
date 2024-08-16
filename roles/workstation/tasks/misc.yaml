@@ -1,70 +1,70 @@
 # Cria diretorio git
-- name: Creating git directory
-  file:
-    path: "{{ home_user }}/git"
-    state: directory
-    mode: "0755"
+# - name: Creating git directory
+#   file:
+#     path: "{{ home_user }}/git"
+#     state: directory
+#     mode: "0755"
 
-# Copia o script que fará
-# as atualizações do repositório
-- name: Copy script to update git dir repo
-  copy:
-    src: "{{ role_path }}/files/sync_git.sh"
-    dest: "{{ home_user }}"
-    mode: "0775"
+# # Copia o script que fará
+# # as atualizações do repositório
+# - name: Copy script to update git dir repo
+#   copy:
+#     src: "{{ role_path }}/files/sync_git.sh"
+#     dest: "{{ home_user }}"
+#     mode: "0775"
 
-# Adiciona todas modificações
-# da variavel $PATH do sistema
-- name: Check if bashrc exists
-  stat:
-    path: "{{ home_user }}/.bashrc"
-  register: bashrc
+# # Adiciona todas modificações
+# # da variavel $PATH do sistema
+# - name: Check if bashrc exists
+#   stat:
+#     path: "{{ home_user }}/.bashrc"
+#   register: bashrc
 
-- name: Append $PATH at .bashrc file
-  lineinfile:
-    path: "{{ home_user }}/.bashrc"
-    line: "{{ app_path }}"
-    state: present
-  when: bashrc.stat.exists
+# - name: Append $PATH at .bashrc file
+#   lineinfile:
+#     path: "{{ home_user }}/.bashrc"
+#     line: "{{ app_path }}"
+#     state: present
+#   when: bashrc.stat.exists
 
-- name: Check if zshrc exists
-  stat:
-    path: "{{ home_user }}/.zshrc"
-  register: zshrc
+# - name: Check if zshrc exists
+#   stat:
+#     path: "{{ home_user }}/.zshrc"
+#   register: zshrc
 
-- name: Append $PATH at .zshrc file
-  lineinfile:
-    path: "{{ home_user }}/.zshrc"
-    line: "{{ app_path }}"
-    state: present
-  when: zshrc.stat.exists
+# - name: Append $PATH at .zshrc file
+#   lineinfile:
+#     path: "{{ home_user }}/.zshrc"
+#     line: "{{ app_path }}"
+#     state: present
+#   when: zshrc.stat.exists
 
-# Adiciona os aliases customizados
-# caso não estejam no arquivo
-- name: Checking custom aliases in bashrc
-  lineinfile:
-    path: "{{ home_user }}/.bashrc"
-    line: "# Custom Aliases"
-  check_mode: true
-  register: bash_alias
+# # Adiciona os aliases customizados
+# # caso não estejam no arquivo
+# - name: Checking custom aliases in bashrc
+#   lineinfile:
+#     path: "{{ home_user }}/.bashrc"
+#     line: "# Custom Aliases"
+#   check_mode: true
+#   register: bash_alias
 
-- name: Checking custom aliases in zshrc
-  lineinfile:
-    path: "{{ home_user }}/.zshrc"
-    line: "# Custom Aliases"
-  check_mode: true
-  register: zsh_alias
-  when: zshrc.stat.exists
+# - name: Checking custom aliases in zshrc
+#   lineinfile:
+#     path: "{{ home_user }}/.zshrc"
+#     line: "# Custom Aliases"
+#   check_mode: true
+#   register: zsh_alias
+#   when: zshrc.stat.exists
 
-- name: Append custom aliases at .bashrc file
-  shell:
-    cmd: "cat {{ role_path }}/files/aliases >> ~/.bashrc"
-  when: bashrc.stat.exists and bash_alias.changed
+# - name: Append custom aliases at .bashrc file
+#   shell:
+#     cmd: "cat {{ role_path }}/files/aliases >> ~/.bashrc"
+#   when: bashrc.stat.exists and bash_alias.changed
 
-- name: Append custom aliases at .zshrc file
-  shell:
-    cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
-  when: zshrc.stat.exists and zsh_alias.changed
+# - name: Append custom aliases at .zshrc file
+#   shell:
+#     cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
+#   when: zshrc.stat.exists and zsh_alias.changed
 
 # Postman
 - name: Installing Postman
@@ -73,14 +73,36 @@
     cmd: "snap install postman"
   when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
 
-# Shellcheck
-- name: Installing Shellchek
+- name: Download Postman
   become: true
-  shell:
-    cmd: "{{ role_path }}/files/shellcheck_install.sh"
+  get_url:
+    url: "https://dl.pstmn.io/download/latest/linux_64"
+    dest: "/tmp/postman.tar.gz"
+    mode: "0755"
+  when: ansible_distribution == 'openSUSE Leap'
 
-# SOPS
-- name: Installing SOPS
+- name: Extract Postman
   become: true
-  shell:
-    cmd: "{{ role_path }}/files/sops_install.sh"
+  unarchive:
+    src: "/tmp/postman.tar.gz"
+    dest: "/opt/postman"
+  when: ansible_distribution == 'openSUSE Leap'
+
+- name: Creating Postman Symlink
+  become: true
+  file:
+    src: "/opt/postman/app/Postman"
+    dest: "/usr/bin/postman"
+    state: link
+  when: ansible_distribution == 'openSUSE Leap'
+# # Shellcheck
+# - name: Installing Shellchek
+#   become: true
+#   shell:
+#     cmd: "{{ role_path }}/files/shellcheck_install.sh"
+
+# # SOPS
+# - name: Installing SOPS
+#   become: true
+#   shell:
+#     cmd: "{{ role_path }}/files/sops_install.sh"
