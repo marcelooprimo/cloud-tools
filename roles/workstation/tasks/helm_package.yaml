@@ -26,7 +26,7 @@
   when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 # openSUSE
-- name: Install Docker packages on openSUSE Leap
+- name: Install helm packages on openSUSE Leap
   become: true
   community.general.zypper:
     disable_recommends: false
