@@ -41,6 +41,7 @@
     update_cache: true
     cache_valid_time: 3600
     install_recommends: true
+    state: present
     pkg:
       - apt-transport-https
       - bash-completion
@@ -101,7 +102,7 @@
   become: true
   community.general.zypper:
     disable_recommends: false
-    state: latest
+    state: present
     pkg:
       - bash-completion
       - ca-certificates
