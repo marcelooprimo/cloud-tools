@@ -6,6 +6,7 @@
     dest: "/usr/share/keyrings/microsoft.asc"
     mode: 0644
     force: yes
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 - name: Install VSCode Repository
   become: true
@@ -13,11 +14,39 @@
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/vscode stable main"
     state: present
     filename: vscode
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 - name: Install Visual Studio Code
   become: true
   apt:
     name: code
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+
+# openSUSE
+- name: Creating VSCode repository on openSUSE
+  become: true
+  copy:
+    dest: /etc/zypp/repos.d/vscode.repo
+    content: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      type=rpm-md
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+    mode: 0644
+  when: ansible_distribution == "openSUSE Leap"
+
+- name: Install VSCode on openSUSE
+  become: true
+  community.general.zypper:
+    update_cache: true
+    disable_recommends: false
+    state: present
+    name: code
+    extra_args_precommand: "--gpg-auto-import-keys"
+  when: ansible_distribution == "openSUSE Leap"
 
 - name: Install Virtual Studio Code Extensions
   ignore_errors: true
