@@ -23,29 +23,14 @@
     update_cache: true
     name: "trivy"
     state: latest
-  when: (trivy_install == 'yes') or (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
+  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
 
 # openSUSE
-- name: Creating Trivy repository on openSUSE
-  become: true
-  copy:
-    dest: /etc/zypp/repos.d/trivy.repo
-    content: |
-      [trivy]
-      name=Trivy repository
-      baseurl=https://aquasecurity.github.io/trivy-repo/rpm/releases/\$basearch/
-      gpgcheck=1
-      enabled=1
-      gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key
-    mode: 0644
-  when: trivy_install == 'yes' and ansible_distribution == "openSUSE Leap"
-
-- name: Install Trivy tool on openSUSE
-  become: true
-  community.general.zypper:
-    update_cache: true
-    disable_recommends: false
-    state: present
-    name: trivy
-    extra_args_precommand: "--gpg-auto-import-keys"
-  when: trivy_install == 'yes' and ansible_distribution == "openSUSE Leap"
+- name: Install Trivy tool on openSUSE via ASDF
+  shell: |
+    export ASDF_DIR="{{ home_user }}/.asdf"
+    . $HOME/.asdf/asdf.sh &&
+    asdf plugin add trivy https://github.com/zufardhiyaulhaq/asdf-trivy.git &&
+    asdf install trivy latest &&
+    asdf global trivy latest &&
+    trivy --version
