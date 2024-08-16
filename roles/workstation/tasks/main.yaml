@@ -22,12 +22,12 @@
 # - import_tasks: helm_docs_package.yaml
 # - import_tasks: helmfile_package.yaml
 # # Terraform
-- import_tasks: tfenv_package.yaml
-- import_tasks: tgenv_package.yaml
-- import_tasks: terraformdocs_package.yaml
+# - import_tasks: tfenv_package.yaml
+# - import_tasks: tgenv_package.yaml
+# - import_tasks: terraformdocs_package.yaml
 # # Misc
-# - import_tasks: trivy.yaml
-# - import_tasks: yq_package.yaml
-# - import_tasks: jj_package.yaml
-# - import_tasks: bat_package.yaml
+- import_tasks: trivy.yaml
+- import_tasks: yq_package.yaml
+- import_tasks: jj_package.yaml
+- import_tasks: bat_package.yaml
 # - import_tasks: vscode.yaml
