@@ -71,6 +71,7 @@
   become: true
   shell:
     cmd: "snap install postman"
+  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
 
 # Shellcheck
 - name: Installing Shellchek
