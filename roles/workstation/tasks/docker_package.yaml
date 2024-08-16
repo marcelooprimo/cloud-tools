@@ -3,6 +3,7 @@
   become: true
   shell:
     cmd: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /usr/share/keyrings/docker.asc
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
 - name: Install docker repository Ubuntu
@@ -22,8 +23,8 @@
     filename: docker-ce
   when: ansible_distribution == 'Linux Mint' and ansible_distribution_major_version == '21'
 
-# Instala o docker
-- name: Install Docker
+# Instala o docker Ubuntu/Mint
+- name: Install Docker packages on Ubuntu/Mint
   become: true
   apt:
     update_cache: true
@@ -32,6 +33,21 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+
+# Instala o docker openSUSE
+- name: Install Docker packages on openSUSE Leap
+  become: true
+  community.general.zypper:
+    disable_recommends: false
+    state: present
+    pkg:
+      - docker
+      - docker-compose
+      - docker-buildx
+      - docker-compose-switch
+      - docker-bash-completion
+  when: ansible_distribution == 'openSUSE Leap'
 
 # Adiciona o usuário ao grupo docker
 - name: Adding existing user to group Docker
@@ -63,11 +79,3 @@
   shell:
     cmd: "mv /tmp/docker-machine /usr/local/bin/docker-machine"
   when: 'docker_machine == "yes"'
-
-# Adiciona o usuário ao grupo docker
-- name: Append docker group for {{ user_id }}
-  become: true
-  user:
-    name: "{{ user_id }}"
-    groups: docker
-    append: true
