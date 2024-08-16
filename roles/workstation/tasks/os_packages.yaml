@@ -18,7 +18,7 @@
     state: absent
   when: ansible_distribution == 'Linux Mint'
 
-- name: Update all packages to their latest version
+- name: Update all Ubuntu/Mint packages to their latest version
   become: true
   apt:
     name: "*"
@@ -27,7 +27,7 @@
     state: latest
   when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
 
-- name: Upgrade OS packages
+- name: Upgrade Ubuntu/Mint OS packages
   become: true
   apt:
     upgrade: dist
@@ -35,7 +35,7 @@
     cache_valid_time: 3600
   when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
 
-- name: Install OS packages
+- name: Install OS packages Ubuntu/Mint
   become: true
   apt:
     update_cache: true
@@ -83,7 +83,7 @@
 
 # Opensuse support
 
-- name: Update all packages to their latest version
+- name: Update all openSUSE Leap packages to their latest version
   become: true
   community.general.zypper:
     name: "*"
@@ -91,14 +91,14 @@
     state: latest
   when: ansible_distribution == 'openSUSE Leap'
 
-- name: Perform a dist-upgrade
+- name: Perform openSUSE Leap dist-upgrade
   become: true
   community.general.zypper:
     name: "*"
     state: dist-upgrade
   when: ansible_distribution == 'openSUSE Leap'
 
-- name: Install OS packages
+- name: Install OS packages openSUSE Leap
   become: true
   community.general.zypper:
     disable_recommends: false
