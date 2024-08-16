@@ -38,3 +38,11 @@
             https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
     mode: 0644
   when: ansible_distribution == "openSUSE Leap"
+
+- name: Install GCloud tool on openSUSE
+  become: true
+  community.general.zypper:
+    disable_recommends: false
+    state: present
+    name: google-cloud-sdk
+  when: ansible_distribution == "openSUSE Leap"
