@@ -1,20 +1,40 @@
-- name: Add GCloud key
+- name: Add GCloud key on Ubuntu/Linux Mint
   become: true
   get_url:
     url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
     dest: /usr/share/keyrings/cloud.google.asc
     mode: "0644"
     force: yes
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
-- name: Add GCloud repository
+- name: Add GCloud repository on Ubuntu/Linux Mint
   become: true
   apt_repository:
     repo: "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main"
     state: present
     filename: google-cloud-sdk
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
-- name: Installing GCloud tool
+- name: Installing GCloud tool on Ubuntu/Linux Mint
   become: true
   apt:
     update_cache: true
     name: google-cloud-sdk
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+
+# openSUSE
+- name: Creating GCloud repository on openSUSE
+  become: true
+  copy:
+    dest: /etc/zypp/repos.d/google-cloud-sdk.repo
+    content: |
+      [google-cloud-sdk]
+      name=Google Cloud SDK
+      baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+            https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    mode: 0644
+  when: ansible_distribution == "openSUSE Leap"
