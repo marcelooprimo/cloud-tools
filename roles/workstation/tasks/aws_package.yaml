@@ -63,6 +63,7 @@
   become: true
   community.general.zypper:
     name: "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm"
+    disable_gpg_check: true
   when: ansible_distribution == "openSUSE Leap"
 
 # AWS IAM Authentication
