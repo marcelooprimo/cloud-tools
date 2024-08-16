@@ -9,10 +9,17 @@
     cmd: "{{ app_path }} && kubectl krew install node-shell"
 
 # Instala o kubefwd
-- name: Installing kubefwd
+- name: Installing kubefwd on Ubuntu/Linux Mint
   become: true
   apt:
     deb: https://github.com/txn2/kubefwd/releases/download/{{ kubefwd_version }}/kubefwd_amd64.deb
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+
+- name: Installing kubefwd on openSUSE
+  become: true
+  apt:
+    deb: https://github.com/txn2/kubefwd/releases/download/{{ kubefwd_version }}/kubefwd_amd64.rpm
+  when: ansible_distribution == "openSUSE Leap"
 
 # Instala kubepug
 - name: Installing kubepug
