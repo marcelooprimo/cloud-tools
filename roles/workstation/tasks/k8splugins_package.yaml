@@ -17,8 +17,9 @@
 
 - name: Installing kubefwd on openSUSE
   become: true
-  apt:
-    deb: https://github.com/txn2/kubefwd/releases/download/{{ kubefwd_version }}/kubefwd_amd64.rpm
+  community.general.zypper:
+    name: https://github.com/txn2/kubefwd/releases/download/{{ kubefwd_version }}/kubefwd_amd64.rpm
+    disable_gpg_check: true
   when: ansible_distribution == "openSUSE Leap"
 
 # Instala kubepug
