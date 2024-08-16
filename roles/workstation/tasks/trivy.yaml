@@ -32,5 +32,5 @@
     . $HOME/.asdf/asdf.sh &&
     asdf plugin add trivy https://github.com/zufardhiyaulhaq/asdf-trivy.git &&
     asdf install trivy latest &&
-    asdf global trivy latest &&
-    trivy --version
+    asdf global trivy latest
+  when: trivy_install == 'yes' and ansible_distribution == "openSUSE Leap"
