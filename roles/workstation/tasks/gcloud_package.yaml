@@ -46,4 +46,5 @@
     disable_recommends: false
     state: present
     name: google-cloud-sdk
+    extra_args_precommand: "--gpg-auto-import-keys"
   when: ansible_distribution == "openSUSE Leap"
