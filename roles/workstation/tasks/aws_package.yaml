@@ -53,10 +53,17 @@
   when: zshrc.stat.exists and awscli_install_mode == "pip" and awscli_version == "v1"
 
 # AWS SSM
-- name: Installing AWS SSM
+- name: Installing AWS SSM on Ubuntu/Linux Mint
   become: true
   apt:
     deb: https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+
+- name: Installing AWS SSM on openSUSE
+  become: true
+  community.general.zypper:
+    name: "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm"
+  when: ansible_distribution == "openSUSE Leap"
 
 # AWS IAM Authentication
 - name: Installing IAM Authentication
