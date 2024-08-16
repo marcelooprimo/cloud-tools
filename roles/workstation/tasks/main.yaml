@@ -1,8 +1,8 @@
 ---
 # Pacotes Base
-- import_tasks: os_packages.yaml
-# - import_tasks: zsh_package.yaml
-# - import_tasks: misc.yaml
+# - import_tasks: os_packages.yaml
+- import_tasks: zsh_package.yaml
+- import_tasks: misc.yaml
 # # Go
 # - import_tasks: golang_package.yaml
 # # Docker
