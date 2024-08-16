@@ -83,7 +83,7 @@
   become: true
   shell:
     cmd: "snap install postman"
-  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 # openSUSE
 - name: Download Postman
@@ -98,7 +98,7 @@
   become: true
   unarchive:
     src: "/tmp/postman.tar.gz"
-    dest: "/opt/postman"
+    dest: "/opt/"
   when: ansible_distribution == 'openSUSE Leap'
 
 - name: Creating Postman Symlink

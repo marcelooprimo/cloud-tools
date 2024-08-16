@@ -25,7 +25,7 @@
     update_cache: true
     cache_valid_time: 3600
     state: latest
-  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 - name: Upgrade Ubuntu/Mint OS packages
   become: true
@@ -33,7 +33,7 @@
     upgrade: dist
     update_cache: true
     cache_valid_time: 3600
-  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 - name: Install OS packages Ubuntu/Mint
   become: true
@@ -79,7 +79,7 @@
       - whois
       - wireshark
       - zsh
-  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
 
 # Opensuse support
 
