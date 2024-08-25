@@ -25,9 +25,6 @@ golang_version: "1.22.2"
 # Home do Usuario
 home_user: "/home/{{ ansible_user_id }}"
 
-# Usuário
-user_id: "{{ ansible_user_id }}"
-
 # Helm
 helm_package: "helm=3.13.2-1"
 

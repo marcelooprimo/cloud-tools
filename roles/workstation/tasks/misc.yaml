@@ -66,12 +66,6 @@
     cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
   when: zshrc.stat.exists and zsh_alias.changed
 
-# Postman
-- name: Installing Postman
-  become: true
-  shell:
-    cmd: "snap install postman"
-
 # Shellcheck
 - name: Installing Shellchek
   become: true
@@ -83,3 +77,34 @@
   become: true
   shell:
     cmd: "{{ role_path }}/files/sops_install.sh"
+
+# Postman via snapd
+- name: Installing Postman
+  become: true
+  shell:
+    cmd: "snap install postman"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+
+# openSUSE
+- name: Download Postman
+  become: true
+  get_url:
+    url: "https://dl.pstmn.io/download/latest/linux_64"
+    dest: "/tmp/postman.tar.gz"
+    mode: "0755"
+  when: ansible_distribution == 'openSUSE Leap'
+
+- name: Extract Postman
+  become: true
+  unarchive:
+    src: "/tmp/postman.tar.gz"
+    dest: "/opt/"
+  when: ansible_distribution == 'openSUSE Leap'
+
+- name: Creating Postman Symlink
+  become: true
+  file:
+    src: "/opt/Postman/app/Postman"
+    dest: "/usr/bin/postman"
+    state: link
+  when: ansible_distribution == 'openSUSE Leap'

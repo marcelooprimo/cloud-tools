@@ -57,6 +57,7 @@
     src: "/etc/profile.d/vte-2.91.sh"
     dest: "/etc/profile.d/vte.sh"
     state: link
+    force: yes
   when: true
 
 - name: Configuring Tilix - Add .zshrc lines
