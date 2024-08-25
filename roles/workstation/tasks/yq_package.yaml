@@ -3,5 +3,5 @@
   become: true
   get_url:
     url: "https://github.com/mikefarah/yq/releases/download/{{ yq_version }}/{{ yq_binary }}"
-    dest: "/usr/bin/"
+    dest: "/usr/bin/yq"
     mode: "0755"
