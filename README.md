@@ -19,12 +19,12 @@ sudo apt install ansible git bzip2
 sudo zypper install ansible git bzip2
 ```
 
-> Nas distro baseadas em ubuntu, recomendo que se utilize a versão mais recente do Ansible, para isso é necessário instalar o Ansible via repositório PPA. Para use os comandos abaixo:
+> Nas distro baseadas em **ubuntu**, recomendo que se utilize a versão mais recente do Ansible, para isso é necessário instalar o Ansible via repositório PPA. Para use os comandos abaixo:
 
 ```bash
-sudo apt update
 sudo apt install software-properties-common
-sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo add-apt-repository ppa:ansible/ansible
+sudo apt update
 sudo apt install ansible
 ```
 
@@ -102,7 +102,7 @@ cloud-tools
 Quebra de compatibilidade
 -------
 
-> - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04```, ```ubuntu 24.04```, ```Linux Mint 21``` (esta última é uma variante do ubuntu 22.04, então nada muda :wink: ) e Opensuse Leap 15.6.**
+> - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04```, ```ubuntu 24.04```, ```Linux Mint 21``` , ```Pop!_OS 22.04``` (estas últimas versões são uma variante do ubuntu 22.04, então nada muda :wink: ) e Opensuse Leap 15.6.**
 > - **Para utilizar este playbook, nas versões ```ubuntu 20.04``` e ```Linux Mint 20.3```, baixe a release 1.0.0.**
 
 Informações Importantes
