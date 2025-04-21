@@ -5,7 +5,7 @@ app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/o
 
 # ASDF
 asdf_install: "yes"
-asdf_version: "v0.13.1"
+asdf_version: "v0.14.1"
 
 # AWS modo de instalação, opção pip ou apt
 awscli_install_mode: "pip"
@@ -14,28 +14,28 @@ awscli_install_mode: "pip"
 awscli_version: "v2"
 
 # AWS IAM VERSION
-iam_auth_version: "0.6.11"
+iam_auth_version: "0.7.1"
 
 # Docker Machine
 docker_machine: "no"
 
 # Golang
-golang_version: "1.22.2"
+golang_version: "1.24.2"
 
 # Home do Usuario
 home_user: "/home/{{ ansible_user_id }}"
 
 # Helm
-helm_package: "helm=3.13.2-1"
+helm_package: "helm=3.17.2-1"
 
 # Helm Diff version
-helm_diff: "v3.8.1"
+helm_diff: "v3.11.0"
 
 # Helm Secrets version
-helm_secrets: "v4.5.1"
+helm_secrets: "v4.6.3"
 
 # Helm Docs
-helm_docs_version: "1.11.3"
+helm_docs_version: "1.14.2"
 helm_docs_package: "helm-docs_{{ helm_docs_version }}_linux_x86_64.tar.gz"
 
 # Helmfile
@@ -43,6 +43,7 @@ helmfile_version: "v0.144.0"
 helmfile_downloaded_filename: "helmfile_linux_amd64"
 
 # JJ
+jj_install: "no"
 jj_version: "1.9.2"
 
 # Krew
@@ -52,7 +53,7 @@ krew_package: "krew-linux_amd64"
 kubefwd_version: "1.22.5"
 
 # Kubepug
-kubepug_version: "v1.4.0"
+kubepug_version: "v1.7.1"
 
 # Kubectl
 kubectl_version: "1.29.4"
@@ -70,7 +71,8 @@ install_vscode_plugins: "yes"
 # Nota: As versões 4.1.0 e recentes possuem a letra v antes do número da versão
 # as versões mais antigas 4.0.0 e anteriores não possuem tal letra.
 # Verificar a nomenclatura e alterar a variável antes de iniciar o playbook
-yq_version: "v4.35.2"
+yq_install: "no"
+yq_version: "v4.44.6"
 yq_binary: "yq_linux_amd64"
 
 # ZSH

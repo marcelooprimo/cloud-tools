@@ -6,7 +6,7 @@
     dest: /usr/share/keyrings/helm.asc
     mode: "0644"
     force: yes
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # Adiciona o repositório
 - name: Add Helm repository
@@ -15,7 +15,7 @@
     repo: "deb [signed-by=/usr/share/keyrings/helm.asc] https://baltocdn.com/helm/stable/debian/ all main"
     state: present
     filename: helm-stable-debian
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # Instala Helm 3
 - name: Installing Helm package
@@ -23,7 +23,7 @@
   apt:
     update_cache: true
     name: "{{ helm_package }}"
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # openSUSE
 - name: Install helm packages on openSUSE Leap
