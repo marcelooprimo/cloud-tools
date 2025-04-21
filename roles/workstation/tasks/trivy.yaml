@@ -5,7 +5,7 @@
     dest: /usr/share/keyrings/trivy.asc
     mode: "0644"
     force: yes
-  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
+  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS")
 
 # cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
 - name: Add Trivy repository on Ubuntu/Linux Mint
@@ -14,7 +14,7 @@
     repo: "deb [signed-by=/usr/share/keyrings/trivy.asc] https://aquasecurity.github.io/trivy-repo/deb generic main"
     state: present
     filename: trivy.list
-  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
+  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS")
 
 # Instala o trivy
 - name: Install Trivy tool on Ubuntu/Linux Mint
@@ -23,7 +23,7 @@
     update_cache: true
     name: "trivy"
     state: latest
-  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint")
+  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS")
 
 # openSUSE
 - name: Install Trivy tool on openSUSE via ASDF

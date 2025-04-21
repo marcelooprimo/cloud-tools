@@ -5,7 +5,7 @@
     dest: /usr/share/keyrings/cloud.google.asc
     mode: "0644"
     force: yes
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 - name: Add GCloud repository on Ubuntu/Linux Mint
   become: true
@@ -13,14 +13,14 @@
     repo: "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main"
     state: present
     filename: google-cloud-sdk
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 - name: Installing GCloud tool on Ubuntu/Linux Mint
   become: true
   apt:
     update_cache: true
     name: google-cloud-sdk
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # openSUSE
 - name: Creating GCloud repository on openSUSE

@@ -5,3 +5,5 @@
     url: "https://github.com/mikefarah/yq/releases/download/{{ yq_version }}/{{ yq_binary }}"
     dest: "/usr/bin/yq"
     mode: "0755"
+  when: yq_install == 'yes'
+  

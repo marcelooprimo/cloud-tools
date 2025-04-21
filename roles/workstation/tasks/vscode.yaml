@@ -6,7 +6,7 @@
     dest: "/usr/share/keyrings/microsoft.asc"
     mode: 0644
     force: yes
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 - name: Install VSCode Repository on Ubuntu/Linux Mint
   become: true
@@ -14,13 +14,13 @@
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/vscode stable main"
     state: present
     filename: vscode
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 - name: Install Visual Studio Code on Ubuntu/Linux Mint
   become: true
   apt:
     name: code
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # openSUSE
 - name: Creating VSCode repository on openSUSE
