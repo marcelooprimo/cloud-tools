@@ -5,6 +5,7 @@
     src: "https://github.com/tidwall/jj/releases/download/v{{ jj_version }}/jj-{{ jj_version }}-linux-amd64.tar.gz"
     dest: "/tmp/"
     remote_src: true
+  when: jj_install == 'yes'
 
 # Move o binário do JJ
 - name: Moving JJ binary
@@ -13,3 +14,4 @@
     src: "/tmp/jj-{{ jj_version }}-linux-amd64/jj"
     dest: "/usr/local/bin/jj"
     mode: "0755"
+  when: jj_install == 'yes'

@@ -18,22 +18,22 @@
     state: absent
   when: ansible_distribution == 'Linux Mint'
 
-- name: Update all Ubuntu/Mint packages to their latest version
+- name: Update all Ubuntu/Mint/Pop_OS packages to their latest version
   become: true
   apt:
     name: "*"
     update_cache: true
     cache_valid_time: 3600
     state: latest
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
-- name: Upgrade Ubuntu/Mint OS packages
+- name: Upgrade Ubuntu/Mint/Pop_OS OS packages
   become: true
   apt:
     upgrade: dist
     update_cache: true
     cache_valid_time: 3600
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 - name: Install OS packages Ubuntu/Mint
   become: true
@@ -50,8 +50,10 @@
       - curl
       - default-jdk
       - elinks
+      - flameshot
       - fzf
       - gnupg
+      - gparted
       - htop
       - jq
       - lsb-release
@@ -79,7 +81,7 @@
       - whois
       - wireshark
       - zsh
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # Opensuse support
 
@@ -108,8 +110,10 @@
       - ca-certificates
       - curl
       - elinks
+      - flameshot
       - fzf
       - gnupg
+      - gparted
       - htop
       - jq
       - lsb-release
