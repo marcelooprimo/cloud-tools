@@ -3,16 +3,16 @@
   become: true
   shell:
     cmd: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /usr/share/keyrings/docker.asc
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
-- name: Install docker repository Ubuntu
+- name: Install docker repository Ubuntu/Pop_OS
   become: true
   apt_repository:
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
     filename: docker-ce
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Pop!_OS"
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
 - name: Install docker repository Mint
@@ -21,10 +21,10 @@
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/ubuntu jammy stable"
     state: present
     filename: docker-ce
-  when: ansible_distribution == 'Linux Mint' and ansible_distribution_major_version == '21'
+  when: ansible_distribution == "Linux Mint" and ansible_distribution_major_version == "21"
 
 # Instala o docker Ubuntu/Mint
-- name: Install Docker packages on Ubuntu/Mint
+- name: Install Docker packages on Ubuntu/Mint/Pop_OS
   become: true
   apt:
     update_cache: true
@@ -32,8 +32,9 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-buildx-plugin
       - docker-compose-plugin
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
 
 # Instala o docker openSUSE
 - name: Install Docker packages on openSUSE Leap
