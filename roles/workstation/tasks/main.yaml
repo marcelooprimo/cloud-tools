@@ -1,22 +1,22 @@
 ---
 # Pacotes Base
-#- import_tasks: os_packages.yaml
-#- import_tasks: zsh_package.yaml
-#- import_tasks: misc.yaml
+- import_tasks: os_packages.yaml
+- import_tasks: zsh_package.yaml
+- import_tasks: misc.yaml
 # Go
-#- import_tasks: golang_package.yaml
+- import_tasks: golang_package.yaml
 # Docker
-#- import_tasks: docker_package.yaml
+- import_tasks: docker_package.yaml
 # AWS
-#- import_tasks: aws_package.yaml
+- import_tasks: aws_package.yaml
 # Google Cloud
-#- import_tasks: gcloud_package.yaml
+- import_tasks: gcloud_package.yaml
 # ASDF
-#- import_tasks: asdf.yaml
+- import_tasks: asdf.yaml
 # k8s
-#- import_tasks: kubectx_kubens_package.yaml
-#- import_tasks: krew_package.yaml
-#- import_tasks: k8splugins_package.yaml
+- import_tasks: kubectx_kubens_package.yaml
+- import_tasks: krew_package.yaml
+- import_tasks: k8splugins_package.yaml
 # Helm
 - import_tasks: helm_package.yaml
 - import_tasks: helm_docs_package.yaml
