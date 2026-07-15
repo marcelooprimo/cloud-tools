@@ -51,6 +51,11 @@
     line: "\n# Persistent rehash\nzstyle ':completion:*' rehash true"
   when: zsh_install == "yes"
 
+- name: Check vte profile script
+  stat:
+    path: /etc/profile.d/vte-2.91.sh
+  register: vte_script
+
 - name: Configuring Tilix - creating symbolic link
   become: true
   file:
@@ -58,7 +63,7 @@
     dest: "/etc/profile.d/vte.sh"
     state: link
     force: yes
-  when: true
+  when: vte_script.stat.exists
 
 - name: Configuring Tilix - Add .zshrc lines
   lineinfile:

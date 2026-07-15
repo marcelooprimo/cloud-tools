@@ -1,0 +1,46 @@
+---
+# Variáveis para a família Debian (Ubuntu, Linux Mint, Pop!_OS, Debian)
+
+# Origem do repositório Docker (Debian usa /linux/debian, derivados de Ubuntu usam /linux/ubuntu)
+docker_repo_os: "{{ 'debian' if ansible_distribution == 'Debian' else 'ubuntu' }}"
+
+os_packages:
+  - apt-transport-https
+  - bash-completion
+  - build-essential
+  - ca-certificates
+  - curl
+  - default-jdk
+  - elinks
+  - flameshot
+  - fzf
+  - gnupg
+  - gparted
+  - htop
+  - jq
+  - lsb-release
+  - meld
+  - locate
+  - mtr
+  - "{{ 'default-mysql-client' if ansible_distribution == 'Debian' else 'mysql-client' }}"
+  - net-tools
+  - openssl
+  - pass
+  - pipx
+  - p7zip-full
+  - p7zip-rar
+  - python3-pip
+  - python3
+  - python3-venv
+  - redis-tools
+  - snapd
+  - tcpdump
+  - telnet
+  - tilix
+  - traceroute
+  - tree
+  - vim
+  - wget
+  - whois
+  - wireshark
+  - zsh

@@ -1,33 +1,41 @@
 ---
+# Carrega variáveis por família de S.O. (Debian.yaml, Suse.yaml)
+- name: Load OS-family variables
+  include_vars: "{{ ansible_os_family }}.yaml"
+
+# Codinome da base upstream: Mint/Pop -> UBUNTU_CODENAME; Ubuntu/Debian -> VERSION_CODENAME
+- name: Detect upstream codename
+  shell:
+    cmd: ". /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}"
+  register: upstream_codename_cmd
+  changed_when: false
+  when: ansible_os_family == "Debian"
+
+- name: Set upstream codename fact
+  set_fact:
+    upstream_codename: "{{ upstream_codename_cmd.stdout | default('') }}"
+  when: ansible_os_family == "Debian"
+
 # Pacotes Base
 - import_tasks: os_packages.yaml
 - import_tasks: zsh_package.yaml
 - import_tasks: misc.yaml
-# Go
-- import_tasks: golang_package.yaml
 # Docker
 - import_tasks: docker_package.yaml
 # AWS
 - import_tasks: aws_package.yaml
 # Google Cloud
 - import_tasks: gcloud_package.yaml
-# ASDF
-- import_tasks: asdf.yaml
+# mise (kubectl, terraform, terragrunt, go, node, tflint, pre-commit, oci-cli...)
+- import_tasks: mise.yaml
 # k8s
 - import_tasks: kubectx_kubens_package.yaml
 - import_tasks: krew_package.yaml
 - import_tasks: k8splugins_package.yaml
 # Helm
 - import_tasks: helm_package.yaml
-- import_tasks: helm_docs_package.yaml
-- import_tasks: helmfile_package.yaml
-# Terraform
-- import_tasks: tfenv_package.yaml
-- import_tasks: tgenv_package.yaml
-- import_tasks: terraformdocs_package.yaml
 # Misc
 - import_tasks: trivy.yaml
-- import_tasks: yq_package.yaml
 - import_tasks: jj_package.yaml
 - import_tasks: bat_package.yaml
 - import_tasks: vscode.yaml

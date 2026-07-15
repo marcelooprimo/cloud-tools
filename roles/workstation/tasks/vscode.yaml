@@ -6,7 +6,7 @@
     dest: "/usr/share/keyrings/microsoft.asc"
     mode: 0644
     force: yes
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian"
 
 - name: Install VSCode Repository on Ubuntu/Linux Mint
   become: true
@@ -14,13 +14,13 @@
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/vscode stable main"
     state: present
     filename: vscode
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian"
 
 - name: Install Visual Studio Code on Ubuntu/Linux Mint
   become: true
   apt:
     name: code
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian"
 
 # openSUSE
 - name: Creating VSCode repository on openSUSE
@@ -36,7 +36,7 @@
       gpgcheck=1
       gpgkey=https://packages.microsoft.com/keys/microsoft.asc
     mode: 0644
-  when: ansible_distribution == "openSUSE Leap"
+  when: ansible_os_family == "Suse"
 
 - name: Install VSCode on openSUSE
   become: true
@@ -46,7 +46,7 @@
     state: present
     name: code
     extra_args_precommand: "--gpg-auto-import-keys"
-  when: ansible_distribution == "openSUSE Leap"
+  when: ansible_os_family == "Suse"
 
 - name: Install Virtual Studio Code Extensions
   ignore_errors: true
