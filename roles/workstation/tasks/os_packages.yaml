@@ -18,70 +18,32 @@
     state: absent
   when: ansible_distribution == 'Linux Mint'
 
-- name: Update all Ubuntu/Mint/Pop_OS packages to their latest version
+- name: Update all packages to their latest version (apt)
   become: true
   apt:
     name: "*"
     update_cache: true
     cache_valid_time: 3600
     state: latest
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian" and os_upgrade == "yes"
 
-- name: Upgrade Ubuntu/Mint/Pop_OS OS packages
+- name: Upgrade OS packages (apt)
   become: true
   apt:
     upgrade: dist
     update_cache: true
     cache_valid_time: 3600
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian" and os_upgrade == "yes"
 
-- name: Install OS packages Ubuntu/Mint
+- name: Install OS packages (apt)
   become: true
   apt:
     update_cache: true
     cache_valid_time: 3600
     install_recommends: true
     state: present
-    pkg:
-      - apt-transport-https
-      - bash-completion
-      - build-essential
-      - ca-certificates
-      - curl
-      - default-jdk
-      - elinks
-      - flameshot
-      - fzf
-      - gnupg
-      - gparted
-      - htop
-      - jq
-      - lsb-release
-      - meld
-      - locate
-      - mtr
-      - mysql-client
-      - net-tools
-      - openssl
-      - pass
-      - p7zip-full
-      - p7zip-rar
-      - python3-pip
-      - python3
-      - python3-venv
-      - redis-tools
-      - snapd
-      - tcpdump
-      - telnet
-      - tilix
-      - traceroute
-      - tree
-      - vim
-      - wget
-      - whois
-      - wireshark
-      - zsh
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+    pkg: "{{ os_packages }}"
+  when: ansible_os_family == "Debian"
 
 # Opensuse support
 
@@ -91,49 +53,19 @@
     name: "*"
     update_cache: true
     state: latest
-  when: ansible_distribution == 'openSUSE Leap'
+  when: ansible_os_family == "Suse" and os_upgrade == "yes"
 
 - name: Perform openSUSE Leap dist-upgrade
   become: true
   community.general.zypper:
     name: "*"
     state: dist-upgrade
-  when: ansible_distribution == 'openSUSE Leap'
+  when: ansible_os_family == "Suse" and os_upgrade == "yes"
 
 - name: Install OS packages openSUSE Leap
   become: true
   community.general.zypper:
     disable_recommends: false
     state: present
-    pkg:
-      - bash-completion
-      - ca-certificates
-      - curl
-      - elinks
-      - flameshot
-      - fzf
-      - gnupg
-      - gparted
-      - htop
-      - jq
-      - lsb-release
-      - meld
-      - mtr
-      - mysql-client
-      - net-tools
-      - openssl
-      - password-store
-      - python3-pip
-      - python3
-      - python3-virtualenv
-      - tcpdump
-      - telnet
-      - tilix
-      - traceroute
-      - tree
-      - vim
-      - wget
-      - whois
-      - wireshark
-      - zsh
-  when: ansible_distribution == 'openSUSE Leap'
+    pkg: "{{ os_packages }}"
+  when: ansible_os_family == "Suse"

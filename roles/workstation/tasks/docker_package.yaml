@@ -1,30 +1,25 @@
 # Instala a key do repository docker
 - name: Install docker key
   become: true
-  shell:
-    cmd: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /usr/share/keyrings/docker.asc
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  get_url:
+    url: "https://download.docker.com/linux/{{ docker_repo_os }}/gpg"
+    dest: /usr/share/keyrings/docker.asc
+    mode: "0644"
+    force: yes
+  when: ansible_os_family == "Debian"
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
-- name: Install docker repository Ubuntu/Pop_OS
+# usa o codinome da base upstream (Mint 22 -> noble, Mint 21 -> jammy, Debian 13 -> trixie)
+- name: Install docker repository
   become: true
   apt_repository:
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/{{ docker_repo_os }} {{ upstream_codename }} stable"
     state: present
     filename: docker-ce
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian"
 
-# cria o arquivo docker-ce em /etc/apt/sources.list.d/
-- name: Install docker repository Mint
-  become: true
-  apt_repository:
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/ubuntu jammy stable"
-    state: present
-    filename: docker-ce
-  when: ansible_distribution == "Linux Mint" and ansible_distribution_major_version == "21"
-
-# Instala o docker Ubuntu/Mint
-- name: Install Docker packages on Ubuntu/Mint/Pop_OS
+# Instala o docker (apt)
+- name: Install Docker packages (apt)
   become: true
   apt:
     update_cache: true
@@ -34,7 +29,7 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+  when: ansible_os_family == "Debian"
 
 # Instala o docker openSUSE
 - name: Install Docker packages on openSUSE Leap
@@ -48,7 +43,7 @@
       - docker-buildx
       - docker-compose-switch
       - docker-bash-completion
-  when: ansible_distribution == 'openSUSE Leap'
+  when: ansible_os_family == "Suse"
 
 # Adiciona o usuário ao grupo docker
 - name: Adding existing user to group Docker
@@ -57,26 +52,3 @@
     name: "{{ ansible_user_id }}"
     groups: docker
     append: true
-
-# docker machine
-- name: Copy Docker Machine from git
-  become: true
-  get_url:
-    url: " https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-$(uname -s)-$(uname -m)"
-    dest: /tmp/docker-machine
-  when: 'docker_machine == "yes"'
-
-# Altera as permissões
-- name: Changing permission of docker machine file
-  become: true
-  file:
-    path: /tmp/docker-machine
-    mode: "0755"
-  when: 'docker_machine == "yes"'
-
-# move o arquivo docker-machine para o destino
-- name: Moving docker-machine file
-  become: true
-  shell:
-    cmd: "mv /tmp/docker-machine /usr/local/bin/docker-machine"
-  when: 'docker_machine == "yes"'

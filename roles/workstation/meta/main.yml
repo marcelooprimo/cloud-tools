@@ -11,11 +11,22 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - "jammy"
+        - "noble"
     - name: Linux Mint
       versions:
         - "victoria"
         - "vera"
         - "vanessa"
+        - "virginia"
+        - "xia"
+        - "wilma"
+        - "zena"
+    - name: Debian
+      versions:
+        - "trixie"
+    - name: openSUSE Leap
+      versions:
+        - "15.6"
 
   galaxy_tags:
     - terraform
@@ -25,5 +36,6 @@ galaxy_info:
     - helm
     - golang
     - sops
+    - mise
 
 dependencies: []
