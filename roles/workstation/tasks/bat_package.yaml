@@ -1,9 +1,24 @@
-# bat app
-- name: Installing bat packages on Ubuntu/Linux Mint
+# bat app (nos repos noble/trixie o pacote é "bat" e o binário chama batcat)
+- name: Installing bat package (apt)
   become: true
   apt:
-    deb: https://github.com/sharkdp/bat/releases/download/v0.21.0/bat_0.21.0_amd64.deb
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+    name: bat
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Check batcat binary
+  stat:
+    path: /usr/bin/batcat
+  register: batcat_bin
+  when: ansible_os_family == "Debian"
+
+- name: Create bat symlink for batcat
+  become: true
+  file:
+    src: /usr/bin/batcat
+    dest: /usr/local/bin/bat
+    state: link
+  when: ansible_os_family == "Debian" and batcat_bin.stat.exists
 
 - name: Install bat packages on openSUSE
   become: true
@@ -15,7 +30,7 @@
       - bat
       - bat-bash-completion
       - bat-zsh-completion
-  when: ansible_distribution == "openSUSE Leap"
+  when: ansible_os_family == "Suse"
 
 # add alias in bashrc or zshrc
 - name: check if bashrc exists

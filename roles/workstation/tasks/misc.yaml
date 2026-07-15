@@ -78,12 +78,13 @@
   shell:
     cmd: "{{ role_path }}/files/sops_install.sh"
 
-# Postman via snapd
+# Postman via snapd (falha esperada em containers sem systemd)
 - name: Installing Postman
   become: true
+  ignore_errors: true
   shell:
     cmd: "snap install postman"
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint"
+  when: ansible_os_family == "Debian"
 
 # openSUSE
 - name: Download Postman
@@ -92,14 +93,14 @@
     url: "https://dl.pstmn.io/download/latest/linux_64"
     dest: "/tmp/postman.tar.gz"
     mode: "0755"
-  when: ansible_distribution == 'openSUSE Leap'
+  when: ansible_os_family == "Suse"
 
 - name: Extract Postman
   become: true
   unarchive:
     src: "/tmp/postman.tar.gz"
     dest: "/opt/"
-  when: ansible_distribution == 'openSUSE Leap'
+  when: ansible_os_family == "Suse"
 
 - name: Creating Postman Symlink
   become: true
@@ -107,4 +108,4 @@
     src: "/opt/Postman/app/Postman"
     dest: "/usr/bin/postman"
     state: link
-  when: ansible_distribution == 'openSUSE Leap'
+  when: ansible_os_family == "Suse"

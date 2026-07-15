@@ -1,11 +1,10 @@
 ---
-# defaults file for role-teste
-# PATH final com todos apps instalados (copiados de um hosts já configurado)
-app_path: 'export PATH="$PATH:/usr/local/go/bin:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx:$HOME/.asdf/shims:$HOME/.asdf/bin"'
+# defaults file for role workstation
+# PATH final com todos apps instalados
+app_path: 'export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx:$HOME/.local/share/mise/shims"'
 
-# ASDF
-asdf_install: "yes"
-asdf_version: "v0.14.1"
+# Atualiza todos os pacotes do S.O. no início ("no" acelera testes em container)
+os_upgrade: "yes"
 
 # AWS modo de instalação, opção pip ou apt
 awscli_install_mode: "pip"
@@ -16,31 +15,17 @@ awscli_version: "v2"
 # AWS IAM VERSION
 iam_auth_version: "0.7.1"
 
-# Docker Machine
-docker_machine: "no"
-
-# Golang
-golang_version: "1.24.2"
-
 # Home do Usuario
 home_user: "/home/{{ ansible_user_id }}"
 
-# Helm
-helm_package: "helm=3.17.2-1"
+# Helm (sem pin de versão: o baltocdn remove builds antigas do repo)
+helm_package: "helm"
 
 # Helm Diff version
 helm_diff: "v3.11.0"
 
 # Helm Secrets version
 helm_secrets: "v4.6.3"
-
-# Helm Docs
-helm_docs_version: "1.14.2"
-helm_docs_package: "helm-docs_{{ helm_docs_version }}_linux_x86_64.tar.gz"
-
-# Helmfile
-helmfile_version: "v0.144.0"
-helmfile_downloaded_filename: "helmfile_linux_amd64"
 
 # JJ
 jj_install: "no"
@@ -55,25 +40,22 @@ kubefwd_version: "1.22.5"
 # Kubepug
 kubepug_version: "v1.7.1"
 
-# Kubectl
-kubectl_version: "1.29.4"
+# Kubent (kube-no-trouble)
+kubent_version: "0.7.3"
 
-# Terraform docs
-terraform_docs_version: "v0.16.0"
+# mise (gerenciador de versões — substitui asdf/tfenv/tgenv/nvm)
+mise_install: "yes"
+golang_version: "1.24.2"
+kubectl_version: "latest"
+node_version: "lts"
+terraform_version: "1.5.7"
+terragrunt_version: "0.55.20"
 
 # Trivy
 trivy_install: "yes"
 
 # VSCode
 install_vscode_plugins: "yes"
-
-# YQ
-# Nota: As versões 4.1.0 e recentes possuem a letra v antes do número da versão
-# as versões mais antigas 4.0.0 e anteriores não possuem tal letra.
-# Verificar a nomenclatura e alterar a variável antes de iniciar o playbook
-yq_install: "no"
-yq_version: "v4.44.6"
-yq_binary: "yq_linux_amd64"
 
 # ZSH
 powerlevel10k: "yes"

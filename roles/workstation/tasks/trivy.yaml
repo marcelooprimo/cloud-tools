@@ -5,7 +5,7 @@
     dest: /usr/share/keyrings/trivy.asc
     mode: "0644"
     force: yes
-  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS")
+  when: trivy_install == 'yes' and ansible_os_family == "Debian"
 
 # cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
 - name: Add Trivy repository on Ubuntu/Linux Mint
@@ -14,7 +14,7 @@
     repo: "deb [signed-by=/usr/share/keyrings/trivy.asc] https://aquasecurity.github.io/trivy-repo/deb generic main"
     state: present
     filename: trivy.list
-  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS")
+  when: trivy_install == 'yes' and ansible_os_family == "Debian"
 
 # Instala o trivy
 - name: Install Trivy tool on Ubuntu/Linux Mint
@@ -23,14 +23,12 @@
     update_cache: true
     name: "trivy"
     state: latest
-  when: (trivy_install == 'yes') and (ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS")
+  when: trivy_install == 'yes' and ansible_os_family == "Debian"
 
 # openSUSE
-- name: Install Trivy tool on openSUSE via ASDF
-  shell: |
-    export ASDF_DIR="{{ home_user }}/.asdf"
-    . $HOME/.asdf/asdf.sh &&
-    asdf plugin add trivy https://github.com/zufardhiyaulhaq/asdf-trivy.git &&
-    asdf install trivy latest &&
-    asdf global trivy latest
-  when: trivy_install == 'yes' and ansible_distribution == "openSUSE Leap"
+- name: Install Trivy tool on openSUSE via mise
+  shell:
+    cmd: "mise use --global trivy@latest"
+  environment:
+    PATH: "{{ home_user }}/.local/bin:{{ ansible_env.PATH }}"
+  when: trivy_install == 'yes' and ansible_os_family == "Suse"

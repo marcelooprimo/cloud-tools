@@ -1,0 +1,115 @@
+# mise (mise-en-place) substitui asdf, tfenv, tgenv e nvm
+# https://mise.jdx.dev
+
+- name: Ensure /etc/apt/keyrings exists
+  become: true
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  when: mise_install == "yes" and ansible_os_family == "Debian"
+
+- name: Install mise apt key
+  become: true
+  get_url:
+    url: "https://mise.jdx.dev/gpg-key.pub"
+    dest: /etc/apt/keyrings/mise.asc
+    mode: "0644"
+    force: yes
+  when: mise_install == "yes" and ansible_os_family == "Debian"
+
+- name: Add mise apt repository
+  become: true
+  apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/mise.asc arch=amd64] https://mise.jdx.dev/deb stable main"
+    state: present
+    filename: mise
+  when: mise_install == "yes" and ansible_os_family == "Debian"
+
+- name: Install mise (apt)
+  become: true
+  apt:
+    update_cache: true
+    name: mise
+  when: mise_install == "yes" and ansible_os_family == "Debian"
+
+# openSUSE: instalador oficial (sem repo zypper oficial)
+- name: Install mise on openSUSE
+  shell:
+    cmd: "curl -fsSL https://mise.run | sh"
+    creates: "{{ home_user }}/.local/bin/mise"
+  when: mise_install == "yes" and ansible_os_family == "Suse"
+
+- name: Check if bashrc exists
+  stat:
+    path: "{{ home_user }}/.bashrc"
+  register: bashrc
+
+- name: Check if zshrc exists
+  stat:
+    path: "{{ home_user }}/.zshrc"
+  register: zshrc
+
+- name: Activate mise (.bashrc)
+  lineinfile:
+    path: "{{ home_user }}/.bashrc"
+    line: 'eval "$(mise activate bash)"'
+    state: present
+  when: mise_install == "yes" and bashrc.stat.exists
+
+- name: Activate mise (.zshrc)
+  lineinfile:
+    path: "{{ home_user }}/.zshrc"
+    line: 'eval "$(mise activate zsh)"'
+    state: present
+  when: mise_install == "yes" and zshrc.stat.exists
+
+# Remove a ativação do asdf legado, se existir
+- name: Remove legacy asdf lines from rc files
+  lineinfile:
+    path: "{{ home_user }}/{{ item.file }}"
+    line: "{{ item.line }}"
+    state: absent
+  loop:
+    - { file: ".bashrc", line: ". $HOME/.asdf/asdf.sh" }
+    - { file: ".bashrc", line: ". $HOME/.asdf/completions/asdf.bash" }
+    - { file: ".zshrc", line: ". $HOME/.asdf/asdf.sh" }
+  when: mise_install == "yes"
+  ignore_errors: true
+
+- name: Create mise config directory
+  file:
+    path: "{{ home_user }}/.config/mise"
+    state: directory
+    mode: "0755"
+  when: mise_install == "yes"
+
+- name: Deploy mise global config
+  copy:
+    dest: "{{ home_user }}/.config/mise/config.toml"
+    mode: "0644"
+    content: |
+      [tools]
+      kubectl = "{{ kubectl_version }}"
+      terraform = "{{ terraform_version }}"
+      terragrunt = "{{ terragrunt_version }}"
+      go = "{{ golang_version }}"
+      node = "{{ node_version }}"
+      tflint = "latest"
+      pre-commit = "latest"
+      helm-docs = "latest"
+      terraform-docs = "latest"
+      helmfile = "latest"
+      yq = "latest"
+      "pipx:oci-cli" = "latest"
+
+      [settings]
+      idiomatic_version_file_enable_tools = ["node", "terraform"]
+  when: mise_install == "yes"
+
+- name: Install tools with mise
+  shell:
+    cmd: "mise install --yes"
+  environment:
+    PATH: "{{ home_user }}/.local/bin:{{ ansible_env.PATH }}"
+  when: mise_install == "yes"
