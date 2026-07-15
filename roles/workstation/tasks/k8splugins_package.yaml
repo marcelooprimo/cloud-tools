@@ -12,15 +12,15 @@
 - name: Installing kubefwd on Ubuntu/Linux Mint/Pop_OS
   become: true
   apt:
-    deb: https://github.com/txn2/kubefwd/releases/download/{{ kubefwd_version }}/kubefwd_amd64.deb
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Linux Mint" or ansible_distribution == "Pop!_OS"
+    deb: https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.deb
+  when: ansible_os_family == "Debian"
 
 - name: Installing kubefwd on openSUSE
   become: true
   community.general.zypper:
-    name: https://github.com/txn2/kubefwd/releases/download/{{ kubefwd_version }}/kubefwd_amd64.rpm
+    name: https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.rpm
     disable_gpg_check: true
-  when: ansible_distribution == "openSUSE Leap"
+  when: ansible_os_family == "Suse"
 
 # Instala kubepug
 - name: Installing kubepug
@@ -30,8 +30,10 @@
     dest: /usr/local/bin
     remote_src: true
 
-# Instala kubent
+# Instala kubent (git.io foi desativado pelo GitHub; download direto da release)
 - name: Installing kubent
   become: true
-  shell:
-    cmd: 'sh -c "$(curl -sSL https://git.io/install-kubent)"'
+  unarchive:
+    src: "https://github.com/doitintl/kube-no-trouble/releases/download/{{ kubent_version }}/kubent-{{ kubent_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin
+    remote_src: true
