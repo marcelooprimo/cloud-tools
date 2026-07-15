@@ -15,11 +15,8 @@ awscli_version: "v2"
 # AWS IAM VERSION
 iam_auth_version: "0.7.1"
 
-# Home do Usuario
-home_user: "/home/{{ ansible_user_id }}"
-
-# Helm (sem pin de versão: o baltocdn remove builds antigas do repo)
-helm_package: "helm"
+# Home do Usuario (usa o $HOME real; fallback para /home/<user>)
+home_user: "{{ ansible_env.HOME | default('/home/' + ansible_user_id) }}"
 
 # Helm Diff version
 helm_diff: "v3.11.0"
@@ -35,7 +32,7 @@ jj_version: "1.9.2"
 krew_package: "krew-linux_amd64"
 
 # KubeFWD
-kubefwd_version: "1.22.5"
+kubefwd_version: "1.25.16"
 
 # Kubepug
 kubepug_version: "v1.7.1"

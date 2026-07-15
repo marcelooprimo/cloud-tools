@@ -94,6 +94,7 @@
       terraform = "{{ terraform_version }}"
       terragrunt = "{{ terragrunt_version }}"
       go = "{{ golang_version }}"
+      helm = "3"
       node = "{{ node_version }}"
       tflint = "latest"
       pre-commit = "latest"
