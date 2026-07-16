@@ -1,7 +1,7 @@
 ---
 # defaults file for role workstation
 # PATH final com todos apps instalados
-app_path: 'export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx:$HOME/.local/share/mise/shims"'
+app_path: 'export PATH="$HOME/.local/share/mise/shims:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx:$PATH"'
 
 # Atualiza todos os pacotes do S.O. no início ("no" acelera testes em container)
 os_upgrade: "yes"
