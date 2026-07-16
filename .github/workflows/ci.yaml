@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: ansible-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install ansible-lint
+        run: pip install --user ansible-lint
+
+      - name: Install required collections
+        run: ansible-galaxy collection install community.general
+
+      - name: Run ansible-lint
+        run: ansible-lint
+
+  converge:
+    name: converge+idempotency (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - "ubuntu:24.04"
+          - "linuxmintd/mint22-amd64"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run playbook twice and assert idempotency
+        run: |
+          docker run --rm -v "$PWD":/pb "${{ matrix.image }}" bash -c '
+            set -e
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq >/dev/null
+            apt-get install -y -qq ansible git curl sudo unzip python3-apt >/dev/null 2>&1
+            useradd -m -s /bin/bash tester
+            echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/tester
+            cp -r /pb /home/tester/pb && chown -R tester: /home/tester/pb
+            RUN="cd ~/pb && ansible-playbook -i inventories/inventory.ini playbook-main.yaml -e os_upgrade=no -e install_vscode_plugins=no"
+            su - tester -c "cd ~/pb && ansible-galaxy collection install community.general >/dev/null 2>&1"
+            echo "===== primeira execução (converge) ====="
+            su - tester -c "$RUN"
+            echo "===== segunda execução (idempotência) ====="
+            su - tester -c "$RUN" | tee /tmp/second-run.log
+            grep -qE "changed=0 .*failed=0" /tmp/second-run.log \
+              || { echo "::error::playbook não é idempotente (changed!=0 na 2a execução)"; exit 1; }
+          '
