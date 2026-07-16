@@ -1,130 +1,104 @@
-Cloud Tools
-=========
+# Cloud Tools
 
-Este playbook tem por finalidade facilitar a preparação da estação de trabalho instalando as ferramentas de DevOps que são necessárias no trabalho do dia a dia.
+[![CI](https://github.com/marcelooprimo/cloud-tools/actions/workflows/ci.yaml/badge.svg)](https://github.com/marcelooprimo/cloud-tools/actions/workflows/ci.yaml)
+[![Release](https://github.com/marcelooprimo/cloud-tools/actions/workflows/release.yaml/badge.svg)](https://github.com/marcelooprimo/cloud-tools/actions/workflows/release.yaml)
+[![Latest tag](https://img.shields.io/github/v/tag/marcelooprimo/cloud-tools?label=vers%C3%A3o)](https://github.com/marcelooprimo/cloud-tools/tags)
+[![License: GPL-2.0](https://img.shields.io/badge/license-GPL--2.0-blue)](LICENSE)
 
+Playbook Ansible que provisiona uma estação de trabalho completa de engenharia Cloud/DevOps em uma única execução: ferramentas de containers, Kubernetes, IaC, CLIs de nuvem (AWS, GCP, OCI) e shell — com as versões das ferramentas gerenciadas pelo [mise](https://mise.jdx.dev).
 
-Requisitos
-------------
+## Destaques
 
-Para executar este playbook é necessário ter instalado o ansible no host. Para instalar o ansible, digite:
+- **Detecção por família de S.O.** (`ansible_os_family`) com codinome upstream dinâmico — funciona em qualquer derivado Ubuntu/Debian sem hardcode de release.
+- **Versionamento unificado via mise**: kubectl, terraform, terragrunt, go, node, helm, tflint, pre-commit, helm-docs, terraform-docs, helmfile, yq e oci-cli declarados em um único `config.toml`.
+- **Idempotente**: reexecuções não refazem trabalho já concluído (validado no CI com dupla execução).
+- **Testado em CI** com containers Ubuntu 24.04 e Linux Mint 22 a cada PR (ansible-lint + converge + verificação de idempotência).
 
-**Ubuntu based distro**
-```sh
-sudo apt install ansible git bzip2
-```
+## Distros suportadas
 
-**Opensuse distro**
-```sh
-sudo zypper install ansible git bzip2
-```
+| Família | Distros testadas |
+|---|---|
+| Debian/Ubuntu | Ubuntu 22.04/24.04 · Linux Mint 21.x/22.x · Pop!_OS 22.04 |
+| Suse | openSUSE Leap 15.6 |
 
-> Nas distro baseadas em **ubuntu**, recomendo que se utilize a versão mais recente do Ansible, para isso é necessário instalar o Ansible via repositório PPA. Para use os comandos abaixo:
+> Para Ubuntu 20.04 / Mint 20.x utilize a [release 1.0.0](https://github.com/marcelooprimo/cloud-tools/releases/tag/1.0.0).
 
-```bash
-sudo apt install software-properties-common
-sudo add-apt-repository ppa:ansible/ansible
-sudo apt update
-sudo apt install ansible
-```
+## O que é instalado
 
-> Para mais informações, acesse: https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu
+| Domínio | Ferramentas |
+|---|---|
+| Containers | Docker CE (+ buildx, compose) |
+| Kubernetes | kubectl, krew (tree, node-shell), kubectx/kubens, kubefwd, kubepug, kubent, Lens¹ |
+| Helm | helm 3, helm-diff, helm-secrets, helm-docs, helmfile |
+| IaC | terraform, terragrunt, terraform-docs, tflint |
+| Cloud CLIs | AWS CLI v2 (+ SSM plugin, aws-iam-authenticator), gcloud, oci-cli |
+| Linguagens | Go, Node.js (via mise) |
+| Segurança | trivy, sops, pre-commit |
+| Shell & editor | zsh + oh-my-zsh + powerlevel10k, fontes MesloLGS NF, Tilix, VS Code + extensões, bat, jq, yq, fzf, shellcheck |
+| Utilitários | Postman, meld, flameshot, htop, mtr, wireshark, entre outros (`vars/<família>.yaml`) |
 
-Para executar basta digitar o comando abaixo:
+¹ Itens marcados são opcionais/controlados por variável.
 
-```sh
-ansible-playbook playbook-main.yaml -i inventories/inventory.yaml --ask-become-pass
-```
+## Requisitos
 
-Variáveis
---------------
-
-Em ```roles/workstation/defaults/main.yaml``` estão todas as variáveis que permitem a parametrização deste playbook. 
-
-**É importante conferí-lo para realizar as alterações de versão de software e também alterar algumas outras opções**.
-
-
-Estrutura
-------------
-
-Este projeto possui a seguinte estrutura de diretórios:
+- Ansible ≥ 2.15 e git no host de destino:
 
 ```sh
-cloud-tools
-├── LICENSE
-├── README.md
-├── inventories
-│   └── inventory.yaml
-├── library
-├── module_utils
-├── playbook-main.yaml
-└── roles
-    └── workstation
-        ├── README.md
-        ├── defaults
-        │   └── main.yml
-        ├── files
-        │   ├── aliases
-        │   ├── shellcheck_install.sh
-        │   ├── sops_install.sh
-        │   └── sync_git.sh
-        ├── meta
-        │   └── main.yml
-        ├── tasks
-        │   ├── asdf.yaml
-        │   ├── aws_package.yaml
-        │   ├── bat_package.yaml
-        │   ├── docker_package.yaml
-        │   ├── gcloud_package.yaml
-        │   ├── golang_package.yaml
-        │   ├── helm_docs_package.yaml
-        │   ├── helm_package.yaml
-        │   ├── helmfile_package.yaml
-        │   ├── jj_package.yaml
-        │   ├── k8splugins_package.yaml
-        │   ├── krew_package.yaml
-        │   ├── kubectx_kubens_package.yaml
-        │   ├── main.yaml
-        │   ├── misc.yaml
-        │   ├── os_packages.yaml
-        │   ├── terraformdocs_package.yaml
-        │   ├── tfenv_package.yaml
-        │   ├── tgenv_package.yaml
-        │   ├── trivy.yaml
-        │   ├── vscode.yaml
-        │   ├── yq_package.yaml
-        │   └── zsh_package.yaml
-        └── vars
-            └── main.yaml
+# Ubuntu/Mint/Debian
+sudo apt install ansible git
 
+# openSUSE Leap
+sudo zypper install ansible git
 ```
 
-Quebra de compatibilidade
--------
+## Uso
 
-> - **Este playbook foi atualizado e testado nas distros ```ubuntu 22.04```, ```ubuntu 24.04```, ```Linux Mint 21``` , ```Pop!_OS 22.04``` (estas últimas versões são uma variante do ubuntu 22.04, então nada muda :wink: ) e Opensuse Leap 15.6.**
-> - **Para utilizar este playbook, nas versões ```ubuntu 20.04``` e ```Linux Mint 20.3```, baixe a release 1.0.0.**
+```sh
+git clone https://github.com/marcelooprimo/cloud-tools.git
+cd cloud-tools
+ansible-playbook -i inventories/inventory.ini playbook-main.yaml --ask-become-pass
+```
 
-Informações Importantes
--------
+O playbook roda contra `localhost` (conexão local) e usa `become` apenas nas tarefas de sistema.
 
-- Este playbook irá instalar o ZShell no host e configurá-lo como padrão com o tema powerlevel10k (Caso não seja seu shell padrão, basta apenas inserir os novos valores das variáveis no arquivo ```roles/workstation/vars/main.yaml``` ou alterar o valor delas diretamento no arquivo ```roles/workstation/defaults/main.yaml```).
-- Há opção de instalar o docker machine, mas é necessário alterar a opção no arquivo ```roles/workstation/defaults/main.yaml```
-- O diretório ```roles/workstation/files``` contém alguns scripts importantes e aliases customizados..
-- Possivelmente haverá alguns bugs, necessidade de melhoria de código, então, sinta-se à vontade para corrigí-los; Juntos podemos deixá-lo melhor e mais eficiente.
-- **Não esqueça do seu PR após alteração relevante**. :wink:
+## Configuração
 
-Comportamentos conhecidos
--------
+As variáveis ficam em `roles/workstation/defaults/main.yml`. Principais:
 
-- Algumas vezes, durante a instalação dos plugins do VSCode o servidor dá timeout, a suspeita é que isso ocorra devido ao número de requisições, mas basta executar o playbook apenas com essa tarefa que a instalação ocorrerá tranquilamente.
+| Variável | Default | Efeito |
+|---|---|---|
+| `os_upgrade` | `"yes"` | Executa `dist-upgrade` no início (use `"no"` para runs rápidas/CI) |
+| `mise_install` | `"yes"` | Instala o mise e o toolchain declarado |
+| `golang_version` / `terraform_version` / `terragrunt_version` | pinadas | Versões fixas por reprodutibilidade |
+| `kubectl_version` / `node_version` | `latest` / `lts` | Acompanham a última versão |
+| `zsh_install` / `powerlevel10k` | `"yes"` | Shell zsh + tema |
+| `trivy_install` | `"yes"` | Scanner de vulnerabilidades |
+| `install_vscode_plugins` | `"yes"` | Extensões do VS Code |
+| `jj_install` / `yq_install` | `"no"` | Utilitários opcionais |
 
-Licença de uso
-------------------
+Listas de pacotes por família de S.O.: `roles/workstation/vars/Debian.yaml` e `roles/workstation/vars/Suse.yaml`.
 
-O uso deste playbook é livre e pode ser modificado/melhorado conforme necessidade :wink:
+## Testes
 
-Informações do Autor
-------------------
+O CI executa em cada PR: `ansible-lint`, convergência em containers (Ubuntu 24.04 e Mint 22) e **verificação de idempotência** (a segunda execução deve terminar com `changed=0`). Para reproduzir localmente:
 
-Projeto criado por Marcelo Primo
+```sh
+docker run --rm -v "$PWD":/pb ubuntu:24.04 bash -c '
+  apt-get update -qq && apt-get install -y -qq ansible git curl sudo unzip python3-apt
+  useradd -m -s /bin/bash tester && echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/tester
+  cp -r /pb /home/tester/pb && chown -R tester: /home/tester/pb
+  su - tester -c "cd ~/pb && ansible-playbook -i inventories/inventory.ini playbook-main.yaml -e os_upgrade=no -e install_vscode_plugins=no"
+'
+```
+
+## Versionamento e contribuição
+
+Releases seguem [SemVer](https://semver.org/lang/pt-BR/) e são geradas automaticamente por [semantic-release](https://github.com/semantic-release/semantic-release) a partir de commits/PRs no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/) (`feat:`, `fix:`, `ci:`...). Contribuições são bem-vindas via pull request.
+
+## Licença
+
+Distribuído sob a licença [GPL-2.0](LICENSE).
+
+## Autor
+
+Marcelo Primo — [@marcelooprimo](https://github.com/marcelooprimo)
