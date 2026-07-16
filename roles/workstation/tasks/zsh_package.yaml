@@ -9,6 +9,8 @@
 
 - name: Execute Oh-My-Zsh Installer
   command: "/tmp/install_ohmyzsh.sh"
+  args:
+    creates: "{{ home_user }}/.oh-my-zsh"
   when: zsh_install == "yes"
 
 - name: Changing Default Shell to ZSH
