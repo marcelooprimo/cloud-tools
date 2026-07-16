@@ -7,6 +7,7 @@
     cmd: "{{ app_path }} && helm plugin install https://github.com/databus23/helm-diff --version {{ helm_diff }}"
   register: helm_diff_result
   failed_when: helm_diff_result.rc != 0 and 'already exists' not in helm_diff_result.stderr
+  changed_when: "'already exists' not in helm_diff_result.stderr"
 
 # Adiciona o Helm Secrets (tolera plugin já instalado)
 - name: Add Helm Secrets
@@ -14,3 +15,4 @@
     cmd: "{{ app_path }} && helm plugin install https://github.com/jkroepke/helm-secrets --version {{ helm_secrets }}"
   register: helm_secrets_result
   failed_when: helm_secrets_result.rc != 0 and 'already exists' not in helm_secrets_result.stderr
+  changed_when: "'already exists' not in helm_secrets_result.stderr"

@@ -1,32 +1,25 @@
 galaxy_info:
   author: Marcelo Primo
-  description: Prepare workstation with devops tools.
+  description: >
+    Prepare workstation with devops tools. Tested on Ubuntu 22.04/24.04,
+    Linux Mint 21.x/22.x, Pop!_OS 22.04 and openSUSE Leap 15.6.
   company: No company
 
-  license: GPL
+  license: GPL-2.0-only
 
-  min_ansible_version: "2.9"
+  min_ansible_version: "2.15"
 
   platforms:
     - name: Ubuntu
       versions:
         - "jammy"
         - "noble"
-    - name: Linux Mint
-      versions:
-        - "victoria"
-        - "vera"
-        - "vanessa"
-        - "virginia"
-        - "xia"
-        - "wilma"
-        - "zena"
     - name: Debian
       versions:
-        - "trixie"
-    - name: openSUSE Leap
+        - "all"
+    - name: opensuse
       versions:
-        - "15.6"
+        - "all"
 
   galaxy_tags:
     - terraform

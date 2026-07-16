@@ -5,7 +5,6 @@
     url: "https://download.docker.com/linux/{{ docker_repo_os }}/gpg"
     dest: /usr/share/keyrings/docker.asc
     mode: "0644"
-    force: yes
   when: ansible_os_family == "Debian"
 
 # cria o arquivo docker-ce em /etc/apt/sources.list.d/
