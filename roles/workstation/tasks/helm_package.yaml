@@ -1,12 +1,16 @@
 # Helm é instalado via mise (o repo apt do baltocdn foi descontinuado)
 # Aqui ficam apenas os plugins.
 
-# Adiciona o Helm Diff
+# Adiciona o Helm Diff (tolera plugin já instalado)
 - name: Add Helm Diff
   shell:
     cmd: "{{ app_path }} && helm plugin install https://github.com/databus23/helm-diff --version {{ helm_diff }}"
+  register: helm_diff_result
+  failed_when: helm_diff_result.rc != 0 and 'already exists' not in helm_diff_result.stderr
 
-# Adiciona o Helm Secrets
+# Adiciona o Helm Secrets (tolera plugin já instalado)
 - name: Add Helm Secrets
   shell:
     cmd: "{{ app_path }} && helm plugin install https://github.com/jkroepke/helm-secrets --version {{ helm_secrets }}"
+  register: helm_secrets_result
+  failed_when: helm_secrets_result.rc != 0 and 'already exists' not in helm_secrets_result.stderr

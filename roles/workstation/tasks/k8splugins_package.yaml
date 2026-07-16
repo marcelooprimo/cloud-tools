@@ -1,12 +1,16 @@
-# Exporta o $PATH e Instala kubectl tree
+# Exporta o $PATH e Instala kubectl tree (tolera plugin já instalado)
 - name: Installing kubectl tree plugin
   shell:
     cmd: "{{ app_path }} && kubectl krew install tree"
+  register: krew_tree_result
+  failed_when: krew_tree_result.rc != 0 and 'already installed' not in krew_tree_result.stderr
 
-# Exporta o $PATH e Instala node-shell
+# Exporta o $PATH e Instala node-shell (tolera plugin já instalado)
 - name: Installing node-shell plugin
   shell:
     cmd: "{{ app_path }} && kubectl krew install node-shell"
+  register: krew_nodeshell_result
+  failed_when: krew_nodeshell_result.rc != 0 and 'already installed' not in krew_nodeshell_result.stderr
 
 # Instala o kubefwd
 - name: Installing kubefwd on Ubuntu/Linux Mint/Pop_OS
