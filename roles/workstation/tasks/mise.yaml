@@ -15,7 +15,6 @@
     url: "https://mise.jdx.dev/gpg-key.pub"
     dest: /etc/apt/keyrings/mise.asc
     mode: "0644"
-    force: yes
   when: mise_install == "yes" and ansible_os_family == "Debian"
 
 - name: Add mise apt repository
@@ -34,9 +33,16 @@
   when: mise_install == "yes" and ansible_os_family == "Debian"
 
 # openSUSE: instalador oficial (sem repo zypper oficial)
+- name: Download mise installer (openSUSE)
+  get_url:
+    url: "https://mise.run"
+    dest: /tmp/mise-install.sh
+    mode: "0755"
+  when: mise_install == "yes" and ansible_os_family == "Suse"
+
 - name: Install mise on openSUSE
-  shell:
-    cmd: "curl -fsSL https://mise.run | sh"
+  command:
+    cmd: /tmp/mise-install.sh
     creates: "{{ home_user }}/.local/bin/mise"
   when: mise_install == "yes" and ansible_os_family == "Suse"
 
@@ -75,7 +81,7 @@
     - { file: ".bashrc", line: ". $HOME/.asdf/completions/asdf.bash" }
     - { file: ".zshrc", line: ". $HOME/.asdf/asdf.sh" }
   when: mise_install == "yes"
-  ignore_errors: true
+  failed_when: false
 
 - name: Create mise config directory
   file:
@@ -113,4 +119,6 @@
     cmd: "mise install --yes"
   environment:
     PATH: "{{ home_user }}/.local/bin:{{ ansible_env.PATH }}"
+  register: mise_install_result
+  changed_when: "'all tools are installed' not in (mise_install_result.stdout + mise_install_result.stderr)"
   when: mise_install == "yes"

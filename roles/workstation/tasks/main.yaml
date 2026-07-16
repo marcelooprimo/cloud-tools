@@ -17,25 +17,47 @@
   when: ansible_os_family == "Debian"
 
 # Pacotes Base
-- import_tasks: os_packages.yaml
-- import_tasks: zsh_package.yaml
-- import_tasks: misc.yaml
-# Docker
-- import_tasks: docker_package.yaml
-# AWS
-- import_tasks: aws_package.yaml
-# Google Cloud
-- import_tasks: gcloud_package.yaml
-# mise (kubectl, terraform, terragrunt, go, node, tflint, pre-commit, oci-cli...)
-- import_tasks: mise.yaml
-# k8s
-- import_tasks: kubectx_kubens_package.yaml
-- import_tasks: krew_package.yaml
-- import_tasks: k8splugins_package.yaml
-# Helm
-- import_tasks: helm_package.yaml
-# Misc
-- import_tasks: trivy.yaml
-- import_tasks: jj_package.yaml
-- import_tasks: bat_package.yaml
-- import_tasks: vscode.yaml
+- name: Install base OS packages
+  import_tasks: os_packages.yaml
+
+- name: Configure zsh, oh-my-zsh and powerlevel10k
+  import_tasks: zsh_package.yaml
+
+- name: Apply misc configuration (PATH, aliases, shellcheck, sops, postman)
+  import_tasks: misc.yaml
+
+- name: Install Docker
+  import_tasks: docker_package.yaml
+
+- name: Install AWS tooling
+  import_tasks: aws_package.yaml
+
+- name: Install Google Cloud SDK
+  import_tasks: gcloud_package.yaml
+
+- name: Install mise and managed toolchain
+  import_tasks: mise.yaml
+
+- name: Install kubectx and kubens
+  import_tasks: kubectx_kubens_package.yaml
+
+- name: Install krew
+  import_tasks: krew_package.yaml
+
+- name: Install kubernetes plugins
+  import_tasks: k8splugins_package.yaml
+
+- name: Install helm plugins
+  import_tasks: helm_package.yaml
+
+- name: Install trivy
+  import_tasks: trivy.yaml
+
+- name: Install jj (optional)
+  import_tasks: jj_package.yaml
+
+- name: Install bat
+  import_tasks: bat_package.yaml
+
+- name: Install VS Code and extensions
+  import_tasks: vscode.yaml

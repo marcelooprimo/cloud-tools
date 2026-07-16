@@ -33,7 +33,7 @@
   when: ansible_os_family == "Suse"
 
 # add alias in bashrc or zshrc
-- name: check if bashrc exists
+- name: Check if bashrc exists
   stat:
     path: "{{ home_user }}/.bashrc"
   register: bashrc
@@ -45,7 +45,7 @@
     state: present
   when: bashrc.stat.exists
 
-- name: check if zshrc exists
+- name: Check if zshrc exists
   stat:
     path: "{{ home_user }}/.zshrc"
   register: zshrc
