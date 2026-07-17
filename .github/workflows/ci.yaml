@@ -55,6 +55,10 @@ jobs:
             su - tester -c "$RUN"
             echo "===== segunda execução (idempotência) ====="
             su - tester -c "$RUN" | tee /tmp/second-run.log
-            grep -qE "changed=0 .*failed=0" /tmp/second-run.log \
-              || { echo "::error::playbook não é idempotente (changed!=0 na 2a execução)"; exit 1; }
+            grep -qE "changed=0 .*failed=0" /tmp/second-run.log || {
+              echo "::error::playbook não é idempotente (changed!=0 na 2a execução)"
+              echo "===== tasks que reportaram changed na 2a execução ====="
+              grep -B6 "^changed:" /tmp/second-run.log | grep "TASK \[" || true
+              exit 1
+            }
           '
