@@ -4,8 +4,15 @@
   get_url:
     url: "https://packages.microsoft.com/keys/microsoft.asc"
     dest: "/usr/share/keyrings/microsoft.asc"
-    mode: 0644
-    force: yes
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+
+# O pacote "code" instala e mantém o próprio repositório (vscode.sources, deb822).
+# Só adicionamos o repo no bootstrap, antes da primeira instalação do pacote.
+- name: Check if vscode repo is managed by the package
+  stat:
+    path: /etc/apt/sources.list.d/vscode.sources
+  register: vscode_sources
   when: ansible_os_family == "Debian"
 
 - name: Install VSCode Repository on Ubuntu/Linux Mint
@@ -14,7 +21,7 @@
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/vscode stable main"
     state: present
     filename: vscode
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and not vscode_sources.stat.exists
 
 - name: Install Visual Studio Code on Ubuntu/Linux Mint
   become: true
@@ -35,7 +42,7 @@
       type=rpm-md
       gpgcheck=1
       gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-    mode: 0644
+    mode: "0644"
   when: ansible_os_family == "Suse"
 
 - name: Install VSCode on openSUSE
@@ -49,7 +56,7 @@
   when: ansible_os_family == "Suse"
 
 - name: Install Virtual Studio Code Extensions
-  ignore_errors: true
+  failed_when: false
   shell:
     cmd: code --install-extension '{{ item }}'
   loop:
@@ -70,7 +77,6 @@
     - DavidAnson.vscode-markdownlint
     - CharlesWan.markdown-toc
     - timonwong.shellcheck
-    - HashiCorp.terraform
     - Tim-Koehler.helm-intellisense
     - gurumukhi.selected-lines-count
     - bierner.github-markdown-preview

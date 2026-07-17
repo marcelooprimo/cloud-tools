@@ -8,7 +8,7 @@ on:
     paths:
       - "roles/workstation/**/*.yaml"
       - "playbook-*.yaml"
-      - "inventories/*.yaml"
+      - "inventories/*"
       # Ignore paths
       - "!.gitignore"
 jobs:
