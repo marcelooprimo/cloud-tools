@@ -82,19 +82,8 @@
     cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
   when: zshrc.stat.exists and zsh_alias.changed
 
-# Shellcheck (migração p/ mise prevista na fase 2 do plano de melhoria)
-- name: Installing Shellchek
-  become: true
-  shell:
-    cmd: "{{ role_path }}/files/shellcheck_install.sh"
-    creates: /usr/bin/shellcheck
-
-# SOPS (migração p/ mise prevista na fase 2 do plano de melhoria)
-- name: Installing SOPS
-  become: true
-  shell:
-    cmd: "{{ role_path }}/files/sops_install.sh"
-    creates: /usr/local/bin/sops
+# shellcheck e sops são instalados via mise (mise.yaml) — os scripts
+# antigos resolviam "latest" pela api.github.com, rate-limitada em CI.
 
 # Postman via snapd (falha esperada em containers sem systemd)
 - name: Installing Postman
