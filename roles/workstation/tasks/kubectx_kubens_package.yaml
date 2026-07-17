@@ -17,7 +17,7 @@
     - kubens
 
 # copia zsh completions
-- name: check if Oh-My-zsh completion folder exist
+- name: Check if Oh-My-zsh completion folder exist
   stat:
     path: "{{ home_user }}/.oh-my-zsh/completions"
   register: zsh_completion

@@ -1,7 +1,17 @@
-warn_list:  # or 'skip_list' to silence them completely
+# Configuração do ansible-lint (executado no CI — .github/workflows/ci.yaml)
+#
+# skip_list: dívidas técnicas com correção planejada (ver plano de melhoria):
+#   - fqcn / var-naming / name: refactor estrutural previsto na fase 4
+# warn_list: promoção a erro prevista na fase 2 (pin de versões e supply chain)
+
+skip_list:
+  - fqcn  # fase 4: adotar ansible.builtin.* em todas as tasks
+  - var-naming[no-role-prefix]  # fase 4: prefixo workstation_ nas vars da role
+
+warn_list:
   - command-instead-of-shell  # Use shell only when shell functionality is required
   - experimental  # all rules tagged as experimental
-  - git-latest  # Git checkouts must contain explicit version
-  - no-changed-when  # Commands should not change things if nothing needs doing
-  - package-latest  # Package installs should not use latest
+  - latest[git]  # fase 2: pinar version: nos git clones
+  - no-changed-when  # fase 2: shellcheck/sops migram p/ mise
+  - package-latest  # fase 2: pinar versão do trivy
   - yaml  # Violations reported by yamllint

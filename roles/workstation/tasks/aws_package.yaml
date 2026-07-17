@@ -25,6 +25,7 @@
   become: true
   shell:
     cmd: "/tmp/aws/install --update"
+    creates: /usr/local/bin/aws
   when: awscli_version == "v2"
 
 # Adicionar alias caso seja instalado via pip

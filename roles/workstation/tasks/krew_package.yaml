@@ -4,8 +4,10 @@
     src: https://github.com/kubernetes-sigs/krew/releases/latest/download/{{ krew_package }}.tar.gz
     dest: /tmp/
     remote_src: true
+    creates: "/tmp/{{ krew_package }}"
 
 # Instala o krew
 - name: Installing Krew
   shell:
     cmd: "/tmp/{{ krew_package }} install krew"
+    creates: "{{ home_user }}/.krew/bin/kubectl-krew"

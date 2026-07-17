@@ -4,7 +4,6 @@
     url: https://aquasecurity.github.io/trivy-repo/deb/public.key
     dest: /usr/share/keyrings/trivy.asc
     mode: "0644"
-    force: yes
   when: trivy_install == 'yes' and ansible_os_family == "Debian"
 
 # cria o arquivo trivy.list no diretório /etc/apt/sources.list.d/
