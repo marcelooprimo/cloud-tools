@@ -104,6 +104,8 @@
       node = "{{ node_version }}"
       tflint = "latest"
       pre-commit = "latest"
+      shellcheck = "latest"
+      sops = "latest"
       helm-docs = "latest"
       terraform-docs = "latest"
       helmfile = "latest"
