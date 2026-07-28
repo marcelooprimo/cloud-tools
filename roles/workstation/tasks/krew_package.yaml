@@ -3,6 +3,7 @@
   get_url:
     url: "https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/{{ krew_package }}.tar.gz"
     dest: "/tmp/{{ krew_package }}.tar.gz"
+    mode: "0644"
     checksum: "sha256:https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/{{ krew_package }}.tar.gz.sha256"
 
 - name: Extracting Krew

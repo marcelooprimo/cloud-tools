@@ -19,6 +19,7 @@
   get_url:
     url: "https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.{{ 'deb' if ansible_os_family == 'Debian' else 'rpm' }}"
     dest: "/tmp/kubefwd_amd64.{{ 'deb' if ansible_os_family == 'Debian' else 'rpm' }}"
+    mode: "0644"
     checksum: "sha256:https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_checksums.txt"
 
 - name: Installing kubefwd on Ubuntu/Linux Mint/Pop_OS
@@ -39,6 +40,7 @@
   get_url:
     url: "https://github.com/kubepug/kubepug/releases/download/{{ kubepug_version }}/kubepug_linux_amd64.tar.gz"
     dest: /tmp/kubepug_linux_amd64.tar.gz
+    mode: "0644"
     checksum: "sha256:https://github.com/kubepug/kubepug/releases/download/{{ kubepug_version }}/kubepug_{{ kubepug_version | regex_replace('^v') }}_checksums.txt"
 
 - name: Installing kubepug
