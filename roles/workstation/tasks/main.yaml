@@ -68,6 +68,10 @@
   ansible.builtin.import_tasks: helm_package.yaml
   tags: [k8s, helm]
 
+- name: Install bb Bitbucket helper
+  ansible.builtin.import_tasks: bb_helper.yaml
+  tags: [misc, bitbucket]
+
 - name: Install jj (optional)
   ansible.builtin.import_tasks: jj_package.yaml
   tags: [misc]

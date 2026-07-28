@@ -1,0 +1,540 @@
+#!/usr/bin/env bash
+#
+# bb — helper para Bitbucket Cloud (PRs via REST API v2.0)
+#
+# Segurança:
+#   - O token NUNCA aparece em argv (invisível no `ps aux`) nem no histórico:
+#     é injetado no curl via `-K <(...)` (process substitution, fica em FIFO).
+#   - O token vive criptografado com GPG no `pass`; só é descriptografado
+#     em memória, sob demanda, a cada chamada.
+#   - Ações destrutivas (merge, decline) exibem o PR e o repo alvo e pedem
+#     confirmação; use --yes para pular (obrigatório sem TTY).
+#
+# Convenção de armazenamento (espelha a URL do Bitbucket):
+#   bitbucket.org/<workspace>/<repo>  ->  pass bitbucket/<workspace>/<repo>
+#   Linha 1 do segredo = o token (Repository Access Token, Bearer).
+#   Linhas `# ...`      = comentários (ignoradas).
+#   Linhas `chave: val` = metadados. Datas em ISO YYYY-MM-DD (ano-mes-dia).
+#
+# Workspace/repo são resolvidos pelo `git remote origin`, ou explicitamente
+# com a flag global `--repo <workspace>/<repo>` (recomendado em scripts).
+
+set -euo pipefail
+
+PASS_PREFIX="bitbucket"
+API="https://api.bitbucket.org/2.0"
+STORE_DIR="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+BB_REPO="${BB_REPO:-}"   # também aceita via variável de ambiente
+
+# die [código] mensagem — códigos p/ automação:
+#   1 erro genérico | 2 uso incorreto/pré-condição | 3 auth/token | 4 estado inválido
+die() {
+  local c=1
+  [[ "${1:-}" =~ ^[0-9]+$ ]] && { c="$1"; shift; }
+  printf 'bb: %s\n' "$*" >&2; exit "$c"
+}
+
+# ---- resolução do repo (--repo/BB_REPO > git remote origin) --------------
+resolve_repo() {
+  if [[ -n "$BB_REPO" ]]; then
+    [[ "$BB_REPO" == */* ]] || die 2 "--repo deve ser <workspace>/<repo>: $BB_REPO"
+    WORKSPACE="${BB_REPO%%/*}"
+    REPO="${BB_REPO#*/}"
+    return
+  fi
+  local remote path
+  remote=$(git remote get-url origin 2>/dev/null) \
+    || die 2 "não estou num repositório git com remote 'origin' (ou use --repo ws/repo)"
+  # Aceita: git@bitbucket.org:ws/repo.git | ssh://git@bitbucket.org/ws/repo.git
+  #         https://bitbucket.org/ws/repo.git
+  path=$(printf '%s' "$remote" | sed -E 's#^.*bitbucket\.org[:/]##; s#\.git/?$##')
+  [[ "$path" == */* ]] || die "remote não parece do Bitbucket: $remote"
+  WORKSPACE="${path%%/*}"
+  REPO="${path#*/}"
+}
+
+# ---- token (linha 1 do segredo) -----------------------------------------
+get_token() {
+  local entry="$PASS_PREFIX/$WORKSPACE/$REPO" out
+  out=$(pass show "$entry" 2>/dev/null) \
+    || die 3 "token não encontrado no pass: $entry  (rode: pass insert -m $entry)"
+  printf '%s' "$out" | sed -n '1p'
+}
+
+# ---- chamadas à API (token fora de argv; erro mostra o corpo) ------------
+# api_url: método + URL completa (usada pela paginação)
+api_url() {
+  local method="$1" url="$2"; shift 2
+  local token resp code body
+  token=$(get_token)
+  resp=$(curl -sS -w $'\n%{http_code}' -X "$method" \
+    -K <(printf 'header = "Authorization: Bearer %s"\n' "$token") \
+    -H "Accept: application/json" \
+    "$@" "$url") \
+    || die "falha de rede ao chamar a API"
+  code="${resp##*$'\n'}"
+  body="${resp%$'\n'*}"
+  if [[ "$code" -ge 400 ]]; then
+    printf '%s\n' "$body" | jq -r '.error.message // .type // .' >&2 2>/dev/null \
+      || printf '%s\n' "$body" >&2
+    case "$code" in
+      401|403) die 3 "API retornou HTTP $code (auth/permissão)";;
+      *)       die   "API retornou HTTP $code";;
+    esac
+  fi
+  printf '%s' "$body"
+}
+
+# api: método + caminho relativo ao repo resolvido
+api() {
+  local method="$1" rel="$2"; shift 2
+  api_url "$method" "$API/repositories/$WORKSPACE/$REPO$rel" "$@"
+}
+
+# paginate GET <rel-com-query> <max>: segue .next e agrega .values (máx itens)
+paginate() {
+  local url="$API/repositories/$WORKSPACE/$REPO$1" max="${2:-200}"
+  local all="[]" body count
+  while [[ -n "$url" ]]; do
+    body=$(api_url GET "$url")
+    all=$(jq -c --argjson acc "$all" '$acc + (.values // [])' <<<"$body")
+    count=$(jq 'length' <<<"$all")
+    (( count >= max )) && break
+    url=$(jq -r '.next // empty' <<<"$body")
+  done
+  jq -c ".[0:$max]" <<<"$all"
+}
+
+# Sem fallback silencioso: chutar "main" pode mandar PR para branch errada.
+default_branch() {
+  local b
+  b=$(api GET "" | jq -r '.mainbranch.name // empty')
+  [[ -n "$b" ]] || die "não consegui detectar a branch principal do repo; informe --dest"
+  printf '%s' "$b"
+}
+
+# ---- confirmação para ações destrutivas ----------------------------------
+# confirm <mensagem>: --yes pula; sem TTY exige --yes (seguro p/ scripts).
+confirm() {
+  [[ "${ASSUME_YES:-false}" == "true" ]] && return 0
+  [[ -t 0 ]] || die 2 "sem TTY para confirmar; repita com --yes"
+  local ans
+  read -r -p "$1 [y/N] " ans
+  [[ "$ans" =~ ^[yY]$ ]] || die "abortado pelo usuário"
+}
+
+# pr_fetch <id>: GET do PR (corpo em stdout)
+pr_fetch() { api GET "/pullrequests/$1"; }
+
+# pr_brief <json>: resumo humano com aprovações — usado antes de merge/decline
+pr_brief() {
+  jq -r '
+    (( [.participants[]? | select(.approved == true)] | length )) as $ap |
+    "  repo:      \(env.WORKSPACE)/\(env.REPO)\n" +
+    "  PR #\(.id) [\(.state)]  \(.title)\n" +
+    "  \(.source.branch.name) → \(.destination.branch.name)  — autor: \(.author.display_name)\n" +
+    "  aprovações: \($ap)  |  \(.links.html.href)"' <<<"$1"
+}
+
+# ---- subcomandos ---------------------------------------------------------
+usage_pr_list() {
+  cat <<'EOF'
+uso: bb pr list [--state OPEN|MERGED|DECLINED|SUPERSEDED] [-n <max>] [--json]
+  Lista PRs (paginação automática até <max>; padrão 50).
+EOF
+}
+cmd_pr_list() {
+  local state="OPEN" max=50 as_json="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --state) state="$2"; shift 2;;
+    -n)      max="$2";   shift 2;;
+    --json)  as_json="true"; shift;;
+    -h|--help) usage_pr_list; return 0;;
+    *) die 2 "opção desconhecida em 'pr list': $1  (veja: bb pr list --help)";;
+  esac; done
+  resolve_repo
+  local vals
+  vals=$(paginate "/pullrequests?state=$state&pagelen=50" "$max")
+  if [[ "$as_json" == "true" ]]; then jq . <<<"$vals"; return 0; fi
+  printf 'PRs (%s) em %s/%s:\n' "$state" "$WORKSPACE" "$REPO"
+  jq -r '.[] | "  #\(.id)  [\(.state)]  \(.title)  (\(.source.branch.name) → \(.destination.branch.name))  — \(.author.display_name)"' <<<"$vals"
+}
+
+usage_pr_view() {
+  cat <<'EOF'
+uso: bb pr view <id> [--json]
+  Mostra estado, branches, autor, reviewers, aprovações e descrição do PR.
+EOF
+}
+cmd_pr_view() {
+  local id="" as_json="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --json) as_json="true"; shift;;
+    -h|--help) usage_pr_view; return 0;;
+    -*) die 2 "opção desconhecida em 'pr view': $1";;
+    *) id="$1"; shift;;
+  esac; done
+  [[ -n "$id" ]] || { usage_pr_view; exit 2; }
+  resolve_repo
+  local pr; pr=$(pr_fetch "$id")
+  if [[ "$as_json" == "true" ]]; then jq . <<<"$pr"; return 0; fi
+  export WORKSPACE REPO
+  pr_brief "$pr"
+  jq -r '
+    "  reviewers: " + ([.reviewers[]?.display_name] | join(", ") | if . == "" then "—" else . end),
+    "  criado:    \(.created_on[0:16])  atualizado: \(.updated_on[0:16])",
+    "  ---",
+    (.description // "(sem descrição)")' <<<"$pr"
+}
+
+usage_pr_create() {
+  cat <<'EOF'
+uso: bb pr create --title "T" [--source <branch>] [--dest <branch>]
+                  [--body-file <arquivo> | --desc "..." | --no-template]
+                  [--keep-branch] [--no-reviewers]
+  Sem --body-file/--desc: usa .bitbucket/pull_request_template.md.
+  Por padrão anexa os default reviewers do repo (a API não faz isso sozinha).
+  Exige que a branch de origem exista no remoto (faça push antes).
+EOF
+}
+
+# ---- default reviewers ---------------------------------------------------
+# Busca /default-reviewers do repo e os anexa ao PR, excluindo o autor (o
+# Bitbucket recusa o autor como revisor). Tolerante a falha: o PR já existe.
+# Args: <pr_id> <author_uuid> <title>
+add_default_reviewers() {
+  local pr_id="$1" author_uuid="$2" title="$3" revs n
+  revs=$(api GET "/default-reviewers?pagelen=100" \
+         | jq -c --arg a "$author_uuid" \
+             '[.values[]? | select(.uuid != $a) | {uuid: .uuid}]')
+  n=$(printf '%s' "$revs" | jq 'length')
+  if [[ "$n" -eq 0 ]]; then
+    printf 'bb: repo sem default reviewers a anexar\n' >&2
+    return 0
+  fi
+  api PUT "/pullrequests/$pr_id" -H "Content-Type: application/json" \
+      --data @<(jq -n --arg t "$title" --argjson r "$revs" \
+                  '{title: $t, reviewers: $r}') >/dev/null \
+    && printf 'bb: %s default reviewer(s) anexado(s)\n' "$n" >&2
+}
+
+cmd_pr_create() {
+  local title="" source dest="" desc="" body_file="" close="true" use_template="auto" reviewers_auto="true" as_json="false"
+  source=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --json)        as_json="true"; shift;;
+    --title)       title="$2"; shift 2;;
+    --source)      source="$2"; shift 2;;
+    --dest)        dest="$2"; shift 2;;
+    --desc)        desc="$2"; use_template="off"; shift 2;;
+    --body-file|--template) body_file="$2"; use_template="off"; shift 2;;
+    --no-template) use_template="off"; shift;;
+    --keep-branch) close="false"; shift;;
+    --no-reviewers) reviewers_auto="false"; shift;;
+    -h|--help) usage_pr_create; return 0;;
+    *) die 2 "opção desconhecida em 'pr create': $1  (veja: bb pr create --help)";;
+  esac; done
+  resolve_repo
+  [[ -n "$title"  ]] || die 2 "faltou --title"
+  [[ -n "$source" && "$source" != "HEAD" ]] \
+    || die 2 "HEAD destacado ou branch indetectável; use --source <branch>"
+  # A API falha com erro críptico se a branch não existe no remoto.
+  if git rev-parse --git-dir >/dev/null 2>&1 && [[ -z "$BB_REPO" ]]; then
+    git ls-remote --exit-code --heads origin "$source" >/dev/null 2>&1 \
+      || die 2 "branch '$source' não existe no remoto; faça push antes (git push -u origin $source)"
+  fi
+  [[ -n "$dest" ]] || dest=$(default_branch)
+
+  # Corpo do PR. Precedência:
+  #   --body-file/--template  >  --desc  >  template do repo (auto)  >  vazio
+  # (a API do Bitbucket Cloud NÃO aplica o template sozinha; nós injetamos.)
+  if [[ -n "$body_file" ]]; then
+    [[ -f "$body_file" ]] || die 2 "arquivo de corpo não encontrado: $body_file"
+    desc=$(cat "$body_file")
+  elif [[ -z "$desc" && "$use_template" == "auto" ]]; then
+    local tpl root
+    root=$(git rev-parse --show-toplevel 2>/dev/null || true)
+    for tpl in \
+      "$root/.bitbucket/pull_request_template.md" \
+      "$root/.bitbucket/PULL_REQUEST_TEMPLATE.md"; do
+      if [[ -n "$root" && -f "$tpl" ]]; then
+        desc=$(cat "$tpl")
+        printf 'bb: usando template %s\n' "${tpl#"$root"/}" >&2
+        break
+      fi
+    done
+  fi
+
+  local json
+  json=$(jq -n --arg t "$title" --arg s "$source" --arg d "$dest" \
+            --arg desc "$desc" --argjson close "$close" \
+    '{title:$t, source:{branch:{name:$s}}, destination:{branch:{name:$d}},
+      description:$desc, close_source_branch:$close}')
+  local resp pr_id author
+  resp=$(api POST "/pullrequests" -H "Content-Type: application/json" \
+            --data @<(printf '%s' "$json"))
+  if [[ "$as_json" == "true" ]]; then
+    jq . <<<"$resp"
+  else
+    printf '%s\n' "$resp" \
+      | jq -r '"PR #\(.id) criado: \(.title)\n  \(.source.branch.name) → \(.destination.branch.name)\n  \(.links.html.href)"'
+  fi
+
+  # A API do Bitbucket Cloud NÃO aplica os default reviewers em PRs criados via
+  # REST (só a UI faz). Anexamos manualmente, salvo --no-reviewers.
+  if [[ "$reviewers_auto" == "true" ]]; then
+    pr_id=$(printf '%s' "$resp" | jq -r '.id')
+    author=$(printf '%s' "$resp" | jq -r '.author.uuid // empty')
+    ( add_default_reviewers "$pr_id" "$author" "$title" ) \
+      || printf 'bb: aviso: falha ao anexar default reviewers (PR já foi criado)\n' >&2
+  fi
+}
+
+usage_pr_update() {
+  cat <<'EOF'
+uso: bb pr update <id> [--title "T"] [--desc "..." | --body-file <arquivo>]
+  Atualiza título e/ou descrição de um PR existente.
+EOF
+}
+cmd_pr_update() {
+  local id="" title="" desc="" body_file="" has_desc="false" as_json="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --json)      as_json="true"; shift;;
+    --title)     title="$2"; shift 2;;
+    --desc)      desc="$2"; has_desc="true"; shift 2;;
+    --body-file) body_file="$2"; shift 2;;
+    -h|--help) usage_pr_update; return 0;;
+    -*) die 2 "opção desconhecida em 'pr update': $1";;
+    *) id="$1"; shift;;
+  esac; done
+  [[ -n "$id" ]] || { usage_pr_update; exit 2; }
+  if [[ -n "$body_file" ]]; then
+    [[ -f "$body_file" ]] || die 2 "arquivo de corpo não encontrado: $body_file"
+    desc=$(cat "$body_file"); has_desc="true"
+  fi
+  [[ -n "$title" || "$has_desc" == "true" ]] \
+    || die 2 "nada a atualizar: informe --title e/ou --desc/--body-file"
+  resolve_repo
+  # A API exige title no PUT; preserva o atual quando só a descrição muda.
+  local cur json
+  cur=$(pr_fetch "$id")
+  [[ -n "$title" ]] || title=$(jq -r '.title' <<<"$cur")
+  if [[ "$has_desc" == "true" ]]; then
+    json=$(jq -n --arg t "$title" --arg d "$desc" '{title:$t, description:$d}')
+  else
+    json=$(jq -n --arg t "$title" '{title:$t}')
+  fi
+  local resp
+  resp=$(api PUT "/pullrequests/$id" -H "Content-Type: application/json" \
+      --data @<(printf '%s' "$json"))
+  if [[ "$as_json" == "true" ]]; then jq . <<<"$resp"
+  else jq -r '"PR #\(.id) atualizado: \(.title)"' <<<"$resp"; fi
+}
+
+usage_pr_comment() {
+  cat <<'EOF'
+uso: bb pr comment <id> "texto do comentário"
+  Adiciona um comentário (markdown) ao PR.
+EOF
+}
+cmd_pr_comment() {
+  local id="" text="" as_json="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --json) as_json="true"; shift;;
+    -h|--help) usage_pr_comment; return 0;;
+    -*) die 2 "opção desconhecida em 'pr comment': $1";;
+    *) if [[ -z "$id" ]]; then id="$1"; else text="$1"; fi; shift;;
+  esac; done
+  [[ -n "$id" && -n "$text" ]] || { usage_pr_comment; exit 2; }
+  resolve_repo
+  local resp
+  resp=$(api POST "/pullrequests/$id/comments" -H "Content-Type: application/json" \
+      --data @<(jq -n --arg t "$text" '{content:{raw:$t}}'))
+  if [[ "$as_json" == "true" ]]; then jq . <<<"$resp"
+  else jq -r '"comentário #\(.id) criado no PR"' <<<"$resp"; fi
+}
+
+usage_pr_merge() {
+  cat <<'EOF'
+uso: bb pr merge <id> [--strategy squash|merge_commit|fast_forward]
+                 [--message "..."] [--yes]
+  Mostra o PR e o repo alvo e pede confirmação antes do merge.
+  --yes pula a confirmação (obrigatório quando não há TTY).
+EOF
+}
+cmd_pr_merge() {
+  local id="" strategy="merge_commit" msg="" ASSUME_YES="false" as_json="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --json)     as_json="true"; shift;;
+    --strategy) strategy="$2"; shift 2;;
+    --message)  msg="$2"; shift 2;;
+    --yes|-y)   ASSUME_YES="true"; shift;;
+    -h|--help)  usage_pr_merge; return 0;;
+    -*) die 2 "opção desconhecida em 'pr merge': $1  (veja: bb pr merge --help)";;
+    *) id="$1"; shift;;
+  esac; done
+  [[ -n "$id" ]] || { usage_pr_merge; exit 2; }
+  resolve_repo
+  # Guarda-corpo: mostra o alvo real (repo pode vir do cwd!) e o estado.
+  local pr state
+  pr=$(pr_fetch "$id")
+  state=$(jq -r '.state' <<<"$pr")
+  [[ "$state" == "OPEN" ]] || die 4 "PR #$id não está OPEN (estado: $state); nada a mesclar"
+  export WORKSPACE REPO
+  printf 'Merge deste PR?\n' >&2
+  pr_brief "$pr" >&2
+  ASSUME_YES="$ASSUME_YES" confirm "confirmar merge (--strategy $strategy)"
+  local json
+  json=$(jq -n --arg s "$strategy" --arg m "$msg" \
+    '{merge_strategy:$s} + (if $m=="" then {} else {message:$m} end)')
+  local resp
+  resp=$(api POST "/pullrequests/$id/merge" -H "Content-Type: application/json" \
+      --data @<(printf '%s' "$json"))
+  if [[ "$as_json" == "true" ]]; then jq . <<<"$resp"
+  else jq -r '"PR #\(.id) merge OK [\(.state)]: \(.title)"' <<<"$resp"; fi
+}
+
+usage_pr_decline() {
+  cat <<'EOF'
+uso: bb pr decline <id> [--yes]
+  Recusa (fecha sem mesclar) um PR aberto, com confirmação.
+EOF
+}
+cmd_pr_decline() {
+  local id="" ASSUME_YES="false" as_json="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --json)    as_json="true"; shift;;
+    --yes|-y)  ASSUME_YES="true"; shift;;
+    -h|--help) usage_pr_decline; return 0;;
+    -*) die 2 "opção desconhecida em 'pr decline': $1";;
+    *) id="$1"; shift;;
+  esac; done
+  [[ -n "$id" ]] || { usage_pr_decline; exit 2; }
+  resolve_repo
+  local pr state
+  pr=$(pr_fetch "$id")
+  state=$(jq -r '.state' <<<"$pr")
+  [[ "$state" == "OPEN" ]] || die 4 "PR #$id não está OPEN (estado: $state); nada a recusar"
+  export WORKSPACE REPO
+  printf 'Recusar (decline) este PR?\n' >&2
+  pr_brief "$pr" >&2
+  ASSUME_YES="$ASSUME_YES" confirm "confirmar decline"
+  local resp
+  resp=$(api POST "/pullrequests/$id/decline" -H "Content-Type: application/json")
+  if [[ "$as_json" == "true" ]]; then jq . <<<"$resp"
+  else jq -r '"PR #\(.id) recusado [\(.state)]: \(.title)"' <<<"$resp"; fi
+}
+
+usage_token_audit() {
+  cat <<'EOF'
+uso: bb token audit [--live]
+  Lista validade dos tokens (metadado 'expires:' de cada segredo no pass).
+  --live: além da data, testa cada token contra a API (GET no repo).
+EOF
+}
+cmd_token_audit() {
+  local live="false"
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --live) live="true"; shift;;
+    -h|--help) usage_token_audit; return 0;;
+    *) die 2 "opção desconhecida em 'token audit': $1";;
+  esac; done
+  local root="$STORE_DIR/$PASS_PREFIX"
+  [[ -d "$root" ]] || die "sem entradas '$PASS_PREFIX/' no pass"
+  local now f entry expires secs days flag token ws_repo code livemsg
+  now=$(date +%s)
+  printf '%-45s %-12s %s\n' "REPO" "EXPIRA" "STATUS"
+  while IFS= read -r f; do
+    entry="${f#"$STORE_DIR"/}"; entry="${entry%.gpg}"
+    expires=$(pass show "$entry" 2>/dev/null \
+      | sed -n 's/^expires:[[:space:]]*//p' | head -1)
+    livemsg=""
+    if [[ "$live" == "true" ]]; then
+      token=$(pass show "$entry" 2>/dev/null | sed -n '1p')
+      ws_repo="${entry#"$PASS_PREFIX"/}"
+      code=$(curl -sS -o /dev/null -w '%{http_code}' \
+        -K <(printf 'header = "Authorization: Bearer %s"\n' "$token") \
+        "$API/repositories/$ws_repo" 2>/dev/null || printf '000')
+      case "$code" in
+        200) livemsg="  | auth ok";;
+        000) livemsg="  | ⚠ rede falhou";;
+        *)   livemsg="  | ❌ auth FALHOU (HTTP $code)";;
+      esac
+    fi
+    if [[ -z "$expires" ]]; then
+      printf '%-45s %-12s %s\n' "$entry" "—" "sem 'expires:'$livemsg"
+      continue
+    fi
+    if ! secs=$(date -d "$expires" +%s 2>/dev/null); then
+      printf '%-45s %-12s %s\n' "$entry" "$expires" "⚠ data inválida (use YYYY-MM-DD)$livemsg"
+      continue
+    fi
+    days=$(( (secs - now) / 86400 ))
+    if   (( days < 0  )); then flag="❌ VENCIDO"
+    elif (( days <= 14 )); then flag="⚠ vence em ${days}d"
+    else                       flag="ok (${days}d)"; fi
+    printf '%-45s %-12s %s\n' "$entry" "$expires" "$flag$livemsg"
+  done < <(find "$root" -name '*.gpg' | sort)
+}
+
+usage() {
+  cat <<'EOF'
+bb — helper Bitbucket Cloud (PRs via REST API)
+
+  bb [--repo <ws>/<repo>] <comando>       # --repo dispensa o git remote
+
+  bb pr list    [--state OPEN|MERGED|DECLINED] [-n <max>] [--json]
+  bb pr view    <id> [--json]
+  bb pr create  --title "T" [--source <branch>] [--dest <branch>]
+                [--body-file <arquivo> | --desc "..." | --no-template]
+                [--keep-branch] [--no-reviewers]
+  bb pr update  <id> [--title "T"] [--desc "..." | --body-file <arquivo>]
+  bb pr comment <id> "texto"
+  bb pr merge   <id> [--strategy squash|merge_commit|fast_forward]
+                [--message "..."] [--yes]
+  bb pr decline <id> [--yes]
+  bb token audit [--live]
+
+  Cada subcomando aceita -h/--help; todos os comandos de PR aceitam --json
+  (resposta crua da API, para scripts/agentes).
+  Exit codes: 1 erro | 2 uso/pré-condição | 3 auth/token | 4 estado inválido.
+  merge/decline confirmam mostrando repo e PR alvo; --yes pula (obrigatório
+  sem TTY). Workspace/repo: --repo, senão BB_REPO, senão 'git remote origin'.
+  Token lido de: pass bitbucket/<workspace>/<repo> (linha 1).
+EOF
+}
+
+# ---- dispatch ------------------------------------------------------------
+main() {
+  # flags globais (antes do comando)
+  while [[ "${1:-}" == --* ]]; do case "$1" in
+    --repo) BB_REPO="${2:-}"; [[ -n "$BB_REPO" ]] || die 2 "--repo exige <workspace>/<repo>"; shift 2;;
+    --help) usage; exit 0;;
+    *) die 2 "flag global desconhecida: $1";;
+  esac; done
+  local group="${1:-}"; shift || true
+  case "$group" in
+    pr)
+      local sub="${1:-}"; shift || true
+      case "$sub" in
+        list)    cmd_pr_list "$@";;
+        view)    cmd_pr_view "$@";;
+        create)  cmd_pr_create "$@";;
+        update)  cmd_pr_update "$@";;
+        comment) cmd_pr_comment "$@";;
+        merge)   cmd_pr_merge "$@";;
+        decline) cmd_pr_decline "$@";;
+        *) usage; exit 2;;
+      esac;;
+    token)
+      local sub="${1:-}"; shift || true
+      case "$sub" in
+        audit) cmd_token_audit "$@";;
+        *) usage; exit 2;;
+      esac;;
+    -h|help|"") usage;;
+    *) usage; exit 2;;
+  esac
+}
+
+main "$@"

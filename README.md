@@ -35,7 +35,7 @@ Playbook Ansible que provisiona uma estação de trabalho completa de engenharia
 | Linguagens | Go, Node.js (via mise) |
 | Segurança | trivy, sops, pre-commit (+ template global com gitleaks), gitleaks, cosign, checkov, kubescape |
 | Shell & editor | zsh + oh-my-zsh + powerlevel10k, fontes MesloLGS NF, Tilix, VS Code + extensões, bat, jq, yq, fzf, shellcheck |
-| Utilitários | Postman, meld, flameshot, htop, mtr, wireshark, entre outros (`vars/<família>.yaml`) |
+| Utilitários | Postman, meld, flameshot, htop, mtr, wireshark, `bb` (helper de PRs do Bitbucket com token via `pass`), entre outros (`vars/<família>.yaml`) |
 
 ¹ Itens marcados são opcionais/controlados por variável.
 
