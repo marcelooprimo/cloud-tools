@@ -1,0 +1,34 @@
+# Configuração DevSecOps: pre-commit global via git template dir.
+# As ferramentas (gitleaks, cosign, checkov, kubescape) vêm do mise (mise.yaml).
+
+# Template de referência de .pre-commit-config.yaml para novos repositórios
+- name: Ensure cloud-tools config directory
+  file:
+    path: "{{ home_user }}/.config/cloud-tools"
+    state: directory
+    mode: "0755"
+
+- name: Deploy pre-commit config template
+  copy:
+    src: pre-commit-config.yaml
+    dest: "{{ home_user }}/.config/cloud-tools/pre-commit-config.yaml"
+    mode: "0644"
+
+# git template dir: novos clones/inits já nascem com o hook do pre-commit
+# (o hook só executa em repositórios que tenham .pre-commit-config.yaml)
+- name: Ensure git template directory
+  file:
+    path: "{{ home_user }}/.git-template"
+    state: directory
+    mode: "0755"
+
+- name: Configure git init.templateDir
+  community.general.git_config:
+    name: init.templatedir
+    scope: global
+    value: "{{ home_user }}/.git-template"
+
+- name: Install pre-commit hook into git template dir
+  shell:
+    cmd: "{{ app_path }} && pre-commit init-templatedir {{ home_user }}/.git-template"
+    creates: "{{ home_user }}/.git-template/hooks/pre-commit"
