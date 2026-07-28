@@ -3,18 +3,18 @@
 # PATH final com todos apps instalados
 app_path: 'export PATH="$HOME/.local/share/mise/shims:${KREW_ROOT:-$HOME/.krew}/bin:/opt/kubectx:$PATH"'
 
-# Atualiza todos os pacotes do S.O. no início ("no" acelera testes em container)
-os_upgrade: "yes"
+# Atualiza todos os pacotes do S.O. no início (false acelera testes em container)
+os_upgrade: true
 
 # Home do Usuario (usa o $HOME real; fallback para /home/<user>)
 home_user: "{{ ansible_env.HOME | default('/home/' + ansible_user_id) }}"
 
 # ---------------------------------------------------------------------------
-# mise (gerenciador de versões — substitui asdf/tfenv/tgenv/nvm)
+# mise (gerenciador de versões)
 # Todas as versões pinadas por reprodutibilidade e supply chain; o backend
 # aqua do mise verifica checksums/assinaturas dos artefatos baixados.
 # ---------------------------------------------------------------------------
-mise_install: "yes"
+mise_install: true
 
 # renovate: datasource=github-releases depName=aws/aws-cli
 awscli_version: "2.34.43"
@@ -101,16 +101,16 @@ helm_diff: "v3.11.0"
 helm_secrets: "v4.6.3"
 
 # JJ (CLI de JSON do tidwall, não o VCS jujutsu)
-jj_install: "no"
+jj_install: false
 jj_version: "1.9.2"
 
 # Trivy
-trivy_install: "yes"
+trivy_install: true
 
 # VSCode
-install_vscode_plugins: "yes"
+install_vscode_plugins: true
 
 # ZSH
-powerlevel10k: "yes"
-powerlevel10k_default: "yes"
-zsh_install: "yes"
+powerlevel10k: true
+powerlevel10k_default: true
+zsh_install: true

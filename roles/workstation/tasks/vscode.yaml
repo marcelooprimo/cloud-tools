@@ -1,7 +1,7 @@
 # Instalação do VSCode
 - name: Install Microsoft Key on Ubuntu/Linux Mint
   become: true
-  get_url:
+  ansible.builtin.get_url:
     url: "https://packages.microsoft.com/keys/microsoft.asc"
     dest: "/usr/share/keyrings/microsoft.asc"
     mode: "0644"
@@ -10,14 +10,14 @@
 # O pacote "code" instala e mantém o próprio repositório (vscode.sources, deb822).
 # Só adicionamos o repo no bootstrap, antes da primeira instalação do pacote.
 - name: Check if vscode repo is managed by the package
-  stat:
+  ansible.builtin.stat:
     path: /etc/apt/sources.list.d/vscode.sources
   register: vscode_sources
   when: ansible_os_family == "Debian"
 
 - name: Install VSCode Repository on Ubuntu/Linux Mint
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://packages.microsoft.com/repos/vscode stable main"
     state: present
     filename: vscode
@@ -25,14 +25,14 @@
 
 - name: Install Visual Studio Code on Ubuntu/Linux Mint
   become: true
-  apt:
+  ansible.builtin.apt:
     name: code
   when: ansible_os_family == "Debian"
 
 # openSUSE
 - name: Creating VSCode repository on openSUSE
   become: true
-  copy:
+  ansible.builtin.copy:
     dest: /etc/zypp/repos.d/vscode.repo
     content: |
       [code]
@@ -56,7 +56,7 @@
   when: ansible_os_family == "Suse"
 
 - name: Install Virtual Studio Code Extensions
-  shell:
+  ansible.builtin.shell:
     cmd: code --install-extension '{{ item }}'
   register: ext_result
   failed_when: false
@@ -88,4 +88,4 @@
     - bierner.markdown-emoji
     - ms-toolsai.jupyter
     - redhat.ansible
-  when: install_vscode_plugins == 'yes'
+  when: install_vscode_plugins | bool
