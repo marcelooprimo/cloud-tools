@@ -1,0 +1,15 @@
+# bb — helper para Bitbucket Cloud (PRs via REST API).
+# Depende de: pass (token em bitbucket/<workspace>/<repo>), jq, curl, git —
+# todos instalados pelo playbook. Nenhum segredo no script: o token é lido
+# do pass em runtime e injetado no curl fora de argv.
+- name: Ensure ~/.local/bin exists
+  ansible.builtin.file:
+    path: "{{ home_user }}/.local/bin"
+    state: directory
+    mode: "0755"
+
+- name: Install bb (Bitbucket helper)
+  ansible.builtin.copy:
+    src: bb
+    dest: "{{ home_user }}/.local/bin/bb"
+    mode: "0755"
