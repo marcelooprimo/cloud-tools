@@ -59,6 +59,12 @@ cd cloud-tools
 ansible-playbook -i inventories/inventory.ini playbook-main.yaml --ask-become-pass
 ```
 
+Para executar apenas um domínio, use tags (`base`, `shell`, `docker`, `cloud`, `aws`, `gcp`, `mise`, `devsecops`, `k8s`, `helm`, `editor`, `misc`):
+
+```sh
+ansible-playbook -i inventories/inventory.ini playbook-main.yaml --ask-become-pass --tags docker
+```
+
 O playbook roda contra `localhost` (conexão local) e usa `become` apenas nas tarefas de sistema.
 
 > **Nota de segurança — grupo `docker`**: o playbook adiciona o usuário ao grupo `docker`, que na prática equivale a acesso root local (qualquer membro pode montar `/` num container). É o comportamento padrão do Docker CE para uso em workstation; se o seu contexto exigir isolamento maior, considere [Docker rootless](https://docs.docker.com/engine/security/rootless/) ou Podman.
@@ -69,13 +75,13 @@ As variáveis ficam em `roles/workstation/defaults/main.yml`. Principais:
 
 | Variável | Default | Efeito |
 |---|---|---|
-| `os_upgrade` | `"yes"` | Executa `dist-upgrade` no início (use `"no"` para runs rápidas/CI) |
-| `mise_install` | `"yes"` | Instala o mise e o toolchain declarado |
-| `*_version` (kubectl, terraform, go, node, helm, trivy…) | pinadas | Todas as versões fixas por reprodutibilidade/supply chain (bump via PR) |
-| `zsh_install` / `powerlevel10k` | `"yes"` | Shell zsh + tema |
-| `trivy_install` | `"yes"` | Scanner de vulnerabilidades |
-| `install_vscode_plugins` | `"yes"` | Extensões do VS Code |
-| `jj_install` / `yq_install` | `"no"` | Utilitários opcionais |
+| `os_upgrade` | `true` | Executa `dist-upgrade` no início (use `false` para runs rápidas/CI) |
+| `mise_install` | `true` | Instala o mise e o toolchain declarado |
+| `*_version` (kubectl, terraform, go, node, helm, trivy…) | pinadas | Todas as versões fixas por reprodutibilidade/supply chain (bump via Renovate/PR) |
+| `zsh_install` / `powerlevel10k` | `true` | Shell zsh + tema |
+| `trivy_install` | `true` | Scanner de vulnerabilidades |
+| `install_vscode_plugins` | `true` | Extensões do VS Code |
+| `jj_install` | `false` | Utilitário opcional |
 
 Listas de pacotes por família de S.O.: `roles/workstation/vars/Debian.yaml` e `roles/workstation/vars/Suse.yaml`.
 

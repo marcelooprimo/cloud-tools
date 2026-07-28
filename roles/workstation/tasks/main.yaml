@@ -1,63 +1,81 @@
 ---
 # Carrega variáveis por família de S.O. (Debian.yaml, Suse.yaml)
 - name: Load OS-family variables
-  include_vars: "{{ ansible_os_family }}.yaml"
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yaml"
+  tags: [always]
 
 # Codinome da base upstream: Mint/Pop -> UBUNTU_CODENAME; Ubuntu/Debian -> VERSION_CODENAME
 - name: Detect upstream codename
-  shell:
+  ansible.builtin.shell:
     cmd: ". /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}"
   register: upstream_codename_cmd
   changed_when: false
   when: ansible_os_family == "Debian"
+  tags: [always]
 
 - name: Set upstream codename fact
-  set_fact:
+  ansible.builtin.set_fact:
     upstream_codename: "{{ upstream_codename_cmd.stdout | default('') }}"
   when: ansible_os_family == "Debian"
+  tags: [always]
 
 # Pacotes Base
 - name: Install base OS packages
-  import_tasks: os_packages.yaml
+  ansible.builtin.import_tasks: os_packages.yaml
+  tags: [base]
 
 - name: Configure zsh, oh-my-zsh and powerlevel10k
-  import_tasks: zsh_package.yaml
+  ansible.builtin.import_tasks: zsh_package.yaml
+  tags: [shell]
 
-- name: Apply misc configuration (PATH, aliases, shellcheck, sops, postman)
-  import_tasks: misc.yaml
+- name: Apply misc configuration (PATH, aliases, postman)
+  ansible.builtin.import_tasks: misc.yaml
+  tags: [shell, misc]
 
 - name: Install Docker
-  import_tasks: docker_package.yaml
+  ansible.builtin.import_tasks: docker_package.yaml
+  tags: [docker]
 
 - name: Install AWS tooling
-  import_tasks: aws_package.yaml
+  ansible.builtin.import_tasks: aws_package.yaml
+  tags: [cloud, aws]
 
 - name: Install Google Cloud SDK
-  import_tasks: gcloud_package.yaml
+  ansible.builtin.import_tasks: gcloud_package.yaml
+  tags: [cloud, gcp]
 
 - name: Install mise and managed toolchain
-  import_tasks: mise.yaml
+  ansible.builtin.import_tasks: mise.yaml
+  tags: [mise]
 
 - name: Configure DevSecOps tooling (pre-commit template dir)
-  import_tasks: devsecops.yaml
+  ansible.builtin.import_tasks: devsecops.yaml
+  tags: [devsecops]
 
 - name: Install kubectx and kubens
-  import_tasks: kubectx_kubens_package.yaml
+  ansible.builtin.import_tasks: kubectx_kubens_package.yaml
+  tags: [k8s]
 
 - name: Install krew
-  import_tasks: krew_package.yaml
+  ansible.builtin.import_tasks: krew_package.yaml
+  tags: [k8s]
 
 - name: Install kubernetes plugins
-  import_tasks: k8splugins_package.yaml
+  ansible.builtin.import_tasks: k8splugins_package.yaml
+  tags: [k8s]
 
 - name: Install helm plugins
-  import_tasks: helm_package.yaml
+  ansible.builtin.import_tasks: helm_package.yaml
+  tags: [k8s, helm]
 
 - name: Install jj (optional)
-  import_tasks: jj_package.yaml
+  ansible.builtin.import_tasks: jj_package.yaml
+  tags: [misc]
 
 - name: Install bat
-  import_tasks: bat_package.yaml
+  ansible.builtin.import_tasks: bat_package.yaml
+  tags: [shell, misc]
 
 - name: Install VS Code and extensions
-  import_tasks: vscode.yaml
+  ansible.builtin.import_tasks: vscode.yaml
+  tags: [editor]
