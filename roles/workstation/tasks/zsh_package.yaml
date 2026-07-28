@@ -60,13 +60,13 @@
     path: /etc/profile.d/vte-2.91.sh
   register: vte_script
 
-- name: Configuring Tilix - creating symbolic link
+- name: Configuring Tilix - creating symbolic link # noqa: risky-file-permissions (symlink não tem mode próprio)
   become: true
   file:
     src: "/etc/profile.d/vte-2.91.sh"
     dest: "/etc/profile.d/vte.sh"
     state: link
-    force: yes
+    force: true
   when: vte_script.stat.exists
 
 - name: Configuring Tilix - Add .zshrc lines
