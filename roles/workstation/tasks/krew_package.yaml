@@ -1,7 +1,13 @@
-# Faz download do krew
+# Faz download do krew (versão pinada, checksum publicado na release)
 - name: Downloading Krew
+  get_url:
+    url: "https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/{{ krew_package }}.tar.gz"
+    dest: "/tmp/{{ krew_package }}.tar.gz"
+    checksum: "sha256:https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/{{ krew_package }}.tar.gz.sha256"
+
+- name: Extracting Krew
   unarchive:
-    src: https://github.com/kubernetes-sigs/krew/releases/latest/download/{{ krew_package }}.tar.gz
+    src: "/tmp/{{ krew_package }}.tar.gz"
     dest: /tmp/
     remote_src: true
     creates: "/tmp/{{ krew_package }}"

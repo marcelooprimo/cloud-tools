@@ -14,30 +14,42 @@
   failed_when: krew_nodeshell_result.rc != 0 and 'already installed' not in krew_nodeshell_result.stderr
   changed_when: "'already installed' not in krew_nodeshell_result.stderr"
 
-# Instala o kubefwd
+# Instala o kubefwd (download com checksum publicado, depois instala local)
+- name: Downloading kubefwd package
+  get_url:
+    url: "https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.{{ 'deb' if ansible_os_family == 'Debian' else 'rpm' }}"
+    dest: "/tmp/kubefwd_amd64.{{ 'deb' if ansible_os_family == 'Debian' else 'rpm' }}"
+    checksum: "sha256:https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_checksums.txt"
+
 - name: Installing kubefwd on Ubuntu/Linux Mint/Pop_OS
   become: true
   apt:
-    deb: https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.deb
+    deb: /tmp/kubefwd_amd64.deb
   when: ansible_os_family == "Debian"
 
 - name: Installing kubefwd on openSUSE
   become: true
   community.general.zypper:
-    name: https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.rpm
+    name: /tmp/kubefwd_amd64.rpm
     disable_gpg_check: true
   when: ansible_os_family == "Suse"
 
-# Instala kubepug
+# Instala kubepug (download com checksum publicado)
+- name: Downloading kubepug
+  get_url:
+    url: "https://github.com/kubepug/kubepug/releases/download/{{ kubepug_version }}/kubepug_linux_amd64.tar.gz"
+    dest: /tmp/kubepug_linux_amd64.tar.gz
+    checksum: "sha256:https://github.com/kubepug/kubepug/releases/download/{{ kubepug_version }}/kubepug_{{ kubepug_version | regex_replace('^v') }}_checksums.txt"
+
 - name: Installing kubepug
   become: true
   unarchive:
-    src: "https://github.com/kubepug/kubepug/releases/download/{{ kubepug_version }}/kubepug_linux_amd64.tar.gz"
+    src: /tmp/kubepug_linux_amd64.tar.gz
     dest: /usr/local/bin
     remote_src: true
     creates: /usr/local/bin/kubepug
 
-# Instala kubent (git.io foi desativado pelo GitHub; download direto da release)
+# Instala kubent (git.io foi desativado; projeto não publica checksums — só pin)
 - name: Installing kubent
   become: true
   unarchive:

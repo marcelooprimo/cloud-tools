@@ -31,9 +31,9 @@ Playbook Ansible que provisiona uma estação de trabalho completa de engenharia
 | Kubernetes | kubectl, krew (tree, node-shell), kubectx/kubens, kubefwd, kubepug, kubent, Lens¹ |
 | Helm | helm 3, helm-diff, helm-secrets, helm-docs, helmfile |
 | IaC | terraform, terragrunt, terraform-docs, tflint |
-| Cloud CLIs | AWS CLI v2 (+ SSM plugin, aws-iam-authenticator), gcloud, oci-cli |
+| Cloud CLIs | AWS CLI v2 (via mise; + SSM plugin, aws-iam-authenticator), gcloud, oci-cli |
 | Linguagens | Go, Node.js (via mise) |
-| Segurança | trivy, sops, pre-commit |
+| Segurança | trivy (via mise), sops, pre-commit |
 | Shell & editor | zsh + oh-my-zsh + powerlevel10k, fontes MesloLGS NF, Tilix, VS Code + extensões, bat, jq, yq, fzf, shellcheck |
 | Utilitários | Postman, meld, flameshot, htop, mtr, wireshark, entre outros (`vars/<família>.yaml`) |
 
@@ -69,8 +69,7 @@ As variáveis ficam em `roles/workstation/defaults/main.yml`. Principais:
 |---|---|---|
 | `os_upgrade` | `"yes"` | Executa `dist-upgrade` no início (use `"no"` para runs rápidas/CI) |
 | `mise_install` | `"yes"` | Instala o mise e o toolchain declarado |
-| `golang_version` / `terraform_version` / `terragrunt_version` | pinadas | Versões fixas por reprodutibilidade |
-| `kubectl_version` / `node_version` | `latest` / `lts` | Acompanham a última versão |
+| `*_version` (kubectl, terraform, go, node, helm, trivy…) | pinadas | Todas as versões fixas por reprodutibilidade/supply chain (bump via PR) |
 | `zsh_install` / `powerlevel10k` | `"yes"` | Shell zsh + tema |
 | `trivy_install` | `"yes"` | Scanner de vulnerabilidades |
 | `install_vscode_plugins` | `"yes"` | Extensões do VS Code |

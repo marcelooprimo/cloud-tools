@@ -56,9 +56,11 @@
   when: ansible_os_family == "Suse"
 
 - name: Install Virtual Studio Code Extensions
-  failed_when: false
   shell:
     cmd: code --install-extension '{{ item }}'
+  register: ext_result
+  failed_when: false
+  changed_when: "'is already installed' not in ext_result.stdout"
   loop:
     - ms-python.python
     - redhat.vscode-yaml

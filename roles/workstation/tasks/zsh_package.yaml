@@ -2,7 +2,7 @@
 # powerlevel10k
 - name: Installing Oh-My-Zsh
   get_url:
-    url: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+    url: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/{{ ohmyzsh_commit }}/tools/install.sh"
     dest: "/tmp/install_ohmyzsh.sh"
     mode: "0755"
   when: zsh_install == "yes"
@@ -24,6 +24,7 @@
   git:
     repo: "https://github.com/romkatv/powerlevel10k.git"
     dest: "{{ home_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+    version: "{{ powerlevel10k_version }}"
   when: powerlevel10k == "yes" and zsh_install == "yes"
 
 - name: Changing Default ZSH Theme to powerlevel10k
@@ -37,6 +38,7 @@
   git:
     repo: "https://github.com/zsh-users/zsh-autosuggestions"
     dest: "{{ home_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    version: "{{ zsh_autosuggestions_version }}"
   when: zsh_install == "yes"
 
 - name: Enabling zsh-autosuggestions
@@ -85,27 +87,27 @@
 - name: Installing MesloLGS Regular
   become: true
   get_url:
-    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
+    url: https://github.com/romkatv/powerlevel10k-media/raw/{{ p10k_media_commit }}/MesloLGS%20NF%20Regular.ttf
     dest: "/usr/share/fonts/"
     mode: "0664"
 
 - name: Installing MesloLGS Bold
   become: true
   get_url:
-    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
+    url: https://github.com/romkatv/powerlevel10k-media/raw/{{ p10k_media_commit }}/MesloLGS%20NF%20Bold.ttf
     dest: "/usr/share/fonts/"
     mode: "0664"
 
 - name: Installing MesloLGS Italic
   become: true
   get_url:
-    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
+    url: https://github.com/romkatv/powerlevel10k-media/raw/{{ p10k_media_commit }}/MesloLGS%20NF%20Italic.ttf
     dest: "/usr/share/fonts/"
     mode: "0664"
 
 - name: Installing MesloLGS Bold Italic
   become: true
   get_url:
-    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
+    url: https://github.com/romkatv/powerlevel10k-media/raw/{{ p10k_media_commit }}/MesloLGS%20NF%20Bold%20Italic.ttf
     dest: "/usr/share/fonts/"
     mode: "0664"
