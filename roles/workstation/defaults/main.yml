@@ -16,30 +16,57 @@ home_user: "{{ ansible_env.HOME | default('/home/' + ansible_user_id) }}"
 # ---------------------------------------------------------------------------
 mise_install: "yes"
 
+# renovate: datasource=github-releases depName=aws/aws-cli
 awscli_version: "2.34.43"
+# renovate: datasource=github-releases depName=bridgecrewio/checkov
+checkov_version: "3.3.8"
+# renovate: datasource=github-releases depName=sigstore/cosign extractVersion=^v(?<version>.*)$
+cosign_version: "3.1.2"
+# renovate: datasource=github-releases depName=gitleaks/gitleaks extractVersion=^v(?<version>.*)$
+gitleaks_version: "8.30.1"
+# renovate: datasource=github-releases depName=golang/go extractVersion=^go(?<version>.*)$
 golang_version: "1.24.2"
+# renovate: datasource=github-releases depName=kubescape/kubescape
+kubescape_version: "v4.0.11"
+# renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.*)$
 helm_version: "3.21.3"
+# renovate: datasource=github-releases depName=norwoodj/helm-docs extractVersion=^v(?<version>.*)$
 helm_docs_version: "1.14.2"
+# renovate: datasource=github-releases depName=helmfile/helmfile extractVersion=^v(?<version>.*)$
 helmfile_version: "1.7.0"
+# renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
 kubectl_version: "1.36.2"
 node_version: "24"
+# renovate: datasource=github-releases depName=oracle/oci-cli extractVersion=^v(?<version>.*)$
 oci_cli_version: "3.89.2"
+# renovate: datasource=github-releases depName=pre-commit/pre-commit extractVersion=^v(?<version>.*)$
 pre_commit_version: "4.6.0"
+# renovate: datasource=github-releases depName=koalaman/shellcheck extractVersion=^v(?<version>.*)$
 shellcheck_version: "0.11.0"
+# renovate: datasource=github-releases depName=getsops/sops extractVersion=^v(?<version>.*)$
 sops_version: "3.13.2"
+# renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
 terraform_version: "1.5.7"
+# renovate: datasource=github-releases depName=terraform-docs/terraform-docs extractVersion=^v(?<version>.*)$
 terraform_docs_version: "0.24.0"
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt extractVersion=^v(?<version>.*)$
 terragrunt_version: "0.55.20"
+# renovate: datasource=github-releases depName=terraform-linters/tflint extractVersion=^v(?<version>.*)$
 tflint_version: "0.63.1"
+# renovate: datasource=github-releases depName=aquasecurity/trivy extractVersion=^v(?<version>.*)$
 trivy_version: "0.72.0"
+# renovate: datasource=github-releases depName=mikefarah/yq extractVersion=^v(?<version>.*)$
 yq_version: "4.53.3"
 
 # ---------------------------------------------------------------------------
 # Pins de git/commits (repositórios clonados ou raw URLs)
 # ---------------------------------------------------------------------------
 ohmyzsh_commit: "7ea697fd8138550ddf7262456d412f0dcd1cbf84"
+# renovate: datasource=github-releases depName=romkatv/powerlevel10k
 powerlevel10k_version: "v1.20.0"
+# renovate: datasource=github-releases depName=zsh-users/zsh-autosuggestions
 zsh_autosuggestions_version: "v0.7.1"
+# renovate: datasource=github-releases depName=ahmetb/kubectx
 kubectx_version: "v0.11.0"
 p10k_media_commit: "145eb9fbc2f42ee408dacd9b22d8e6e0e553f83d"
 
@@ -47,19 +74,24 @@ p10k_media_commit: "145eb9fbc2f42ee408dacd9b22d8e6e0e553f83d"
 # Downloads diretos (com checksum publicado quando disponível)
 # ---------------------------------------------------------------------------
 # AWS IAM VERSION
+# renovate: datasource=github-releases depName=kubernetes-sigs/aws-iam-authenticator extractVersion=^v(?<version>.*)$
 iam_auth_version: "0.7.1"
 
 # Krew
+# renovate: datasource=github-releases depName=kubernetes-sigs/krew
 krew_version: "v0.5.0"
 krew_package: "krew-linux_amd64"
 
 # KubeFWD
+# renovate: datasource=github-releases depName=txn2/kubefwd extractVersion=^v(?<version>.*)$
 kubefwd_version: "1.25.16"
 
 # Kubepug
+# renovate: datasource=github-releases depName=kubepug/kubepug
 kubepug_version: "v1.7.1"
 
 # Kubent (kube-no-trouble) — projeto não publica checksums; apenas pin
+# renovate: datasource=github-releases depName=doitintl/kube-no-trouble
 kubent_version: "0.7.3"
 
 # Helm Diff version

@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Install ansible-lint
         run: pip install --user ansible-lint
@@ -38,10 +40,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Run playbook twice and assert idempotency
+        env:
+          IMAGE: ${{ matrix.image }}
         run: |
-          docker run --rm -v "$PWD":/pb "${{ matrix.image }}" bash -c '
+          docker run --rm -v "$PWD":/pb "$IMAGE" bash -c '
             set -e
             export DEBIAN_FRONTEND=noninteractive
             apt-get update -qq >/dev/null
@@ -62,3 +68,18 @@ jobs:
               exit 1
             }
           '
+
+  zizmor:
+    name: zizmor (workflows audit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install zizmor
+        run: pipx install zizmor
+
+      - name: Audit workflows
+        run: zizmor --min-severity high .github/workflows/

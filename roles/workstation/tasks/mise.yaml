@@ -97,7 +97,11 @@
     content: |
       [tools]
       awscli = "{{ awscli_version }}"
+      checkov = "{{ checkov_version }}"
+      cosign = "{{ cosign_version }}"
+      gitleaks = "{{ gitleaks_version }}"
       go = "{{ golang_version }}"
+      "ubi:kubescape/kubescape" = "{{ kubescape_version }}"
       helm = "{{ helm_version }}"
       helm-docs = "{{ helm_docs_version }}"
       helmfile = "{{ helmfile_version }}"
