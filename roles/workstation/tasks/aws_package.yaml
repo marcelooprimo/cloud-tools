@@ -1,59 +1,9 @@
-# AWS CLI V1 via apt
-- name: Installing AWS CLI via APT
-  become: true
-  apt:
-    install_recommends: true
-    name: awscli
-  when: awscli_install_mode == "apt" and awscli_version == "v1"
+# AWS CLI v2 é instalado via mise (mise.yaml) — o zip oficial não publica
+# checksum simples e o instalador não é idempotente; o backend aqua do mise
+# baixa a release verificando checksum.
 
-# AWS CLI AWS CLI V1 via pip
-- name: Installing AWS CLI via PIP
-  shell:
-    cmd: "python -m pip install awscli --upgrade --user"
-  when: awscli_install_mode == "pip" and awscli_version == "v1"
-
-# AWS CLI V2 via repo AWS
-- name: Downloading AWS CLI V2
-  unarchive:
-    src: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-    dest: "/tmp/"
-    remote_src: true
-    creates: "/tmp/aws"
-  when: awscli_version == "v2"
-
-- name: Installing AWS CLI V2
-  become: true
-  shell:
-    cmd: "/tmp/aws/install --update"
-    creates: /usr/local/bin/aws
-  when: awscli_version == "v2"
-
-# Adicionar alias caso seja instalado via pip
-- name: Check if bashrc exists
-  stat:
-    path: "{{ home_user }}/.bashrc"
-  register: bashrc
-
-- name: Append AWS CLI V1 PIP version alias to the .bashrc file.
-  lineinfile:
-    path: "{{ home_user }}/.bashrc"
-    line: 'alias aws="python -m awscli"'
-    state: present
-  when: bashrc.stat.exists and awscli_install_mode == "pip" and awscli_version == "v1"
-
-- name: Check if zshrc exists
-  stat:
-    path: "{{ home_user }}/.zshrc"
-  register: zshrc
-
-- name: Append AWS CLI V1 PIP version alias to the .zshrc file.
-  lineinfile:
-    path: "{{ home_user }}/.zshrc"
-    line: 'alias aws="python -m awscli"'
-    state: present
-  when: zshrc.stat.exists and awscli_install_mode == "pip" and awscli_version == "v1"
-
-# AWS SSM
+# AWS SSM plugin — a AWS não publica checksums para o pacote; instalado do
+# canal oficial "latest" (decisão documentada no plano de melhoria).
 - name: Installing AWS SSM on Ubuntu/Linux Mint/Pop_OS
   become: true
   apt:
@@ -67,10 +17,11 @@
     disable_gpg_check: true
   when: ansible_os_family == "Suse"
 
-# AWS IAM Authentication
+# AWS IAM Authentication (checksum publicado na release)
 - name: Installing IAM Authentication
   become: true
   get_url:
     url: "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v{{ iam_auth_version }}/aws-iam-authenticator_{{ iam_auth_version }}_linux_amd64"
     dest: "/usr/local/bin/aws-iam-authenticator"
     mode: "0755"
+    checksum: "sha256:https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v{{ iam_auth_version }}/authenticator_{{ iam_auth_version }}_checksums.txt"

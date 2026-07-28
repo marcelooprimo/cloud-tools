@@ -55,32 +55,20 @@
     state: present
   when: zshrc.stat.exists
 
-# Adiciona os aliases customizados
-# caso não estejam no arquivo
-- name: Checking custom aliases in bashrc
-  lineinfile:
+# Adiciona os aliases customizados (bloco gerenciado, idempotente)
+- name: Ensure custom aliases block in .bashrc
+  blockinfile:
     path: "{{ home_user }}/.bashrc"
-    line: "# Custom Aliases"
-  check_mode: true
-  register: bash_alias
+    marker: "# {mark} cloud-tools custom aliases"
+    block: "{{ lookup('file', 'aliases') }}"
+  when: bashrc.stat.exists
 
-- name: Checking custom aliases in zshrc
-  lineinfile:
+- name: Ensure custom aliases block in .zshrc
+  blockinfile:
     path: "{{ home_user }}/.zshrc"
-    line: "# Custom Aliases"
-  check_mode: true
-  register: zsh_alias
+    marker: "# {mark} cloud-tools custom aliases"
+    block: "{{ lookup('file', 'aliases') }}"
   when: zshrc.stat.exists
-
-- name: Append custom aliases at .bashrc file
-  shell:
-    cmd: "cat {{ role_path }}/files/aliases >> ~/.bashrc"
-  when: bashrc.stat.exists and bash_alias.changed
-
-- name: Append custom aliases at .zshrc file
-  shell:
-    cmd: "cat {{ role_path }}/files/aliases >> ~/.zshrc"
-  when: zshrc.stat.exists and zsh_alias.changed
 
 # shellcheck e sops são instalados via mise (mise.yaml) — os scripts
 # antigos resolviam "latest" pela api.github.com, rate-limitada em CI.

@@ -4,6 +4,7 @@
   git:
     repo: "https://github.com/ahmetb/kubectx"
     dest: "/opt/kubectx"
+    version: "{{ kubectx_version }}"
 
 # Cria os links simbólicos
 - name: Creating kubectx and kubens link

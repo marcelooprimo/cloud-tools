@@ -96,21 +96,25 @@
     mode: "0644"
     content: |
       [tools]
-      kubectl = "{{ kubectl_version }}"
-      terraform = "{{ terraform_version }}"
-      terragrunt = "{{ terragrunt_version }}"
+      awscli = "{{ awscli_version }}"
       go = "{{ golang_version }}"
-      helm = "3"
+      helm = "{{ helm_version }}"
+      helm-docs = "{{ helm_docs_version }}"
+      helmfile = "{{ helmfile_version }}"
+      kubectl = "{{ kubectl_version }}"
       node = "{{ node_version }}"
-      tflint = "latest"
-      pre-commit = "latest"
-      shellcheck = "latest"
-      sops = "latest"
-      helm-docs = "latest"
-      terraform-docs = "latest"
-      helmfile = "latest"
-      yq = "latest"
-      "pipx:oci-cli" = "latest"
+      pre-commit = "{{ pre_commit_version }}"
+      shellcheck = "{{ shellcheck_version }}"
+      sops = "{{ sops_version }}"
+      terraform = "{{ terraform_version }}"
+      terraform-docs = "{{ terraform_docs_version }}"
+      terragrunt = "{{ terragrunt_version }}"
+      tflint = "{{ tflint_version }}"
+      {% if trivy_install == "yes" %}
+      trivy = "{{ trivy_version }}"
+      {% endif %}
+      yq = "{{ yq_version }}"
+      "pipx:oci-cli" = "{{ oci_cli_version }}"
 
       [settings]
       idiomatic_version_file_enable_tools = ["node", "terraform"]
