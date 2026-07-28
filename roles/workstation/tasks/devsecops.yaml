@@ -3,13 +3,13 @@
 
 # Template de referência de .pre-commit-config.yaml para novos repositórios
 - name: Ensure cloud-tools config directory
-  file:
+  ansible.builtin.file:
     path: "{{ home_user }}/.config/cloud-tools"
     state: directory
     mode: "0755"
 
 - name: Deploy pre-commit config template
-  copy:
+  ansible.builtin.copy:
     src: pre-commit-config.yaml
     dest: "{{ home_user }}/.config/cloud-tools/pre-commit-config.yaml"
     mode: "0644"
@@ -17,7 +17,7 @@
 # git template dir: novos clones/inits já nascem com o hook do pre-commit
 # (o hook só executa em repositórios que tenham .pre-commit-config.yaml)
 - name: Ensure git template directory
-  file:
+  ansible.builtin.file:
     path: "{{ home_user }}/.git-template"
     state: directory
     mode: "0755"
@@ -29,6 +29,6 @@
     value: "{{ home_user }}/.git-template"
 
 - name: Install pre-commit hook into git template dir
-  shell:
+  ansible.builtin.shell:
     cmd: "{{ app_path }} && pre-commit init-templatedir {{ home_user }}/.git-template"
     creates: "{{ home_user }}/.git-template/hooks/pre-commit"

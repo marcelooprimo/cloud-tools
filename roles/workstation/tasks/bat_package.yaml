@@ -1,20 +1,20 @@
 # bat app (nos repos noble/trixie o pacote é "bat" e o binário chama batcat)
 - name: Installing bat package (apt)
   become: true
-  apt:
+  ansible.builtin.apt:
     name: bat
     state: present
   when: ansible_os_family == "Debian"
 
 - name: Check batcat binary
-  stat:
+  ansible.builtin.stat:
     path: /usr/bin/batcat
   register: batcat_bin
   when: ansible_os_family == "Debian"
 
 - name: Create bat symlink for batcat
   become: true
-  file:
+  ansible.builtin.file:
     src: /usr/bin/batcat
     dest: /usr/local/bin/bat
     state: link
@@ -34,24 +34,24 @@
 
 # add alias in bashrc or zshrc
 - name: Check if bashrc exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ home_user }}/.bashrc"
   register: bashrc
 
 - name: Append bat alias at .bashrc file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.bashrc"
     line: "alias bat='bat --theme ansi'"
     state: present
   when: bashrc.stat.exists
 
 - name: Check if zshrc exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ home_user }}/.zshrc"
   register: zshrc
 
 - name: Append bat alias at .zshrc file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.zshrc"
     line: "alias bat='bat --theme ansi'"
     state: present

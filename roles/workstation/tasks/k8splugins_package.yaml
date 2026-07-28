@@ -1,6 +1,6 @@
 # Exporta o $PATH e Instala kubectl tree (tolera plugin já instalado)
 - name: Installing kubectl tree plugin
-  shell:
+  ansible.builtin.shell:
     cmd: "{{ app_path }} && kubectl krew install tree"
   register: krew_tree_result
   failed_when: krew_tree_result.rc != 0 and 'already installed' not in krew_tree_result.stderr
@@ -8,7 +8,7 @@
 
 # Exporta o $PATH e Instala node-shell (tolera plugin já instalado)
 - name: Installing node-shell plugin
-  shell:
+  ansible.builtin.shell:
     cmd: "{{ app_path }} && kubectl krew install node-shell"
   register: krew_nodeshell_result
   failed_when: krew_nodeshell_result.rc != 0 and 'already installed' not in krew_nodeshell_result.stderr
@@ -16,7 +16,7 @@
 
 # Instala o kubefwd (download com checksum publicado, depois instala local)
 - name: Downloading kubefwd package
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/txn2/kubefwd/releases/download/v{{ kubefwd_version }}/kubefwd_amd64.{{ 'deb' if ansible_os_family == 'Debian' else 'rpm' }}"
     dest: "/tmp/kubefwd_amd64.{{ 'deb' if ansible_os_family == 'Debian' else 'rpm' }}"
     mode: "0644"
@@ -24,7 +24,7 @@
 
 - name: Installing kubefwd on Ubuntu/Linux Mint/Pop_OS
   become: true
-  apt:
+  ansible.builtin.apt:
     deb: /tmp/kubefwd_amd64.deb
   when: ansible_os_family == "Debian"
 
@@ -37,7 +37,7 @@
 
 # Instala kubepug (download com checksum publicado)
 - name: Downloading kubepug
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/kubepug/kubepug/releases/download/{{ kubepug_version }}/kubepug_linux_amd64.tar.gz"
     dest: /tmp/kubepug_linux_amd64.tar.gz
     mode: "0644"
@@ -45,7 +45,7 @@
 
 - name: Installing kubepug
   become: true
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/kubepug_linux_amd64.tar.gz
     dest: /usr/local/bin
     remote_src: true
@@ -54,7 +54,7 @@
 # Instala kubent (git.io foi desativado; projeto não publica checksums — só pin)
 - name: Installing kubent
   become: true
-  unarchive:
+  ansible.builtin.unarchive:
     src: "https://github.com/doitintl/kube-no-trouble/releases/download/{{ kubent_version }}/kubent-{{ kubent_version }}-linux-amd64.tar.gz"
     dest: /usr/local/bin
     remote_src: true

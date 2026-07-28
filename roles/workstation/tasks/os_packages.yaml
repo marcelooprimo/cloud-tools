@@ -2,14 +2,14 @@
 # e para instalar é preciso remover
 # o arquivo nosnap que está em preferences.d
 - name: Check nosnap file
-  stat:
+  ansible.builtin.stat:
     path: /etc/apt/preferences.d/nosnap.pref
   register: nosnap_file
   when: ansible_distribution == 'Linux Mint'
 
 - name: Backup of nosnap file
   become: true
-  copy:
+  ansible.builtin.copy:
     src: /etc/apt/preferences.d/nosnap.pref
     dest: ~/nosnap.backup
     mode: "0644"
@@ -17,22 +17,22 @@
 
 - name: Removing nosnap file
   become: true
-  file:
+  ansible.builtin.file:
     path: /etc/apt/preferences.d/nosnap.pref
     state: absent
   when: ansible_distribution == 'Linux Mint' and nosnap_file.stat.exists
 
 - name: Upgrade OS packages (apt)
   become: true
-  apt:
+  ansible.builtin.apt:
     upgrade: dist
     update_cache: true
     cache_valid_time: 3600
-  when: ansible_os_family == "Debian" and os_upgrade == "yes"
+  when: ansible_os_family == "Debian" and os_upgrade | bool
 
 - name: Install OS packages (apt)
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600
     install_recommends: true
@@ -47,7 +47,7 @@
   community.general.zypper:
     name: "*"
     state: dist-upgrade
-  when: ansible_os_family == "Suse" and os_upgrade == "yes"
+  when: ansible_os_family == "Suse" and os_upgrade | bool
 
 - name: Install OS packages openSUSE Leap
   become: true
