@@ -50,9 +50,6 @@
 - name: Install helm plugins
   import_tasks: helm_package.yaml
 
-- name: Install trivy
-  import_tasks: trivy.yaml
-
 - name: Install jj (optional)
   import_tasks: jj_package.yaml
 
