@@ -6,29 +6,51 @@ app_path: 'export PATH="$HOME/.local/share/mise/shims:${KREW_ROOT:-$HOME/.krew}/
 # Atualiza todos os pacotes do S.O. no início ("no" acelera testes em container)
 os_upgrade: "yes"
 
-# AWS modo de instalação, opção pip ou apt
-awscli_install_mode: "pip"
-
-# Versão do AWS CLI - opção v1 ou v2
-awscli_version: "v2"
-
-# AWS IAM VERSION
-iam_auth_version: "0.7.1"
-
 # Home do Usuario (usa o $HOME real; fallback para /home/<user>)
 home_user: "{{ ansible_env.HOME | default('/home/' + ansible_user_id) }}"
 
-# Helm Diff version
-helm_diff: "v3.11.0"
+# ---------------------------------------------------------------------------
+# mise (gerenciador de versões — substitui asdf/tfenv/tgenv/nvm)
+# Todas as versões pinadas por reprodutibilidade e supply chain; o backend
+# aqua do mise verifica checksums/assinaturas dos artefatos baixados.
+# ---------------------------------------------------------------------------
+mise_install: "yes"
 
-# Helm Secrets version
-helm_secrets: "v4.6.3"
+awscli_version: "2.34.43"
+golang_version: "1.24.2"
+helm_version: "3.21.3"
+helm_docs_version: "1.14.2"
+helmfile_version: "1.7.0"
+kubectl_version: "1.36.2"
+node_version: "24"
+oci_cli_version: "3.89.2"
+pre_commit_version: "4.6.0"
+shellcheck_version: "0.11.0"
+sops_version: "3.13.2"
+terraform_version: "1.5.7"
+terraform_docs_version: "0.24.0"
+terragrunt_version: "0.55.20"
+tflint_version: "0.63.1"
+trivy_version: "0.72.0"
+yq_version: "4.53.3"
 
-# JJ
-jj_install: "no"
-jj_version: "1.9.2"
+# ---------------------------------------------------------------------------
+# Pins de git/commits (repositórios clonados ou raw URLs)
+# ---------------------------------------------------------------------------
+ohmyzsh_commit: "7ea697fd8138550ddf7262456d412f0dcd1cbf84"
+powerlevel10k_version: "v1.20.0"
+zsh_autosuggestions_version: "v0.7.1"
+kubectx_version: "v0.11.0"
+p10k_media_commit: "145eb9fbc2f42ee408dacd9b22d8e6e0e553f83d"
+
+# ---------------------------------------------------------------------------
+# Downloads diretos (com checksum publicado quando disponível)
+# ---------------------------------------------------------------------------
+# AWS IAM VERSION
+iam_auth_version: "0.7.1"
 
 # Krew
+krew_version: "v0.5.0"
 krew_package: "krew-linux_amd64"
 
 # KubeFWD
@@ -37,16 +59,18 @@ kubefwd_version: "1.25.16"
 # Kubepug
 kubepug_version: "v1.7.1"
 
-# Kubent (kube-no-trouble)
+# Kubent (kube-no-trouble) — projeto não publica checksums; apenas pin
 kubent_version: "0.7.3"
 
-# mise (gerenciador de versões — substitui asdf/tfenv/tgenv/nvm)
-mise_install: "yes"
-golang_version: "1.24.2"
-kubectl_version: "latest"
-node_version: "lts"
-terraform_version: "1.5.7"
-terragrunt_version: "0.55.20"
+# Helm Diff version
+helm_diff: "v3.11.0"
+
+# Helm Secrets version
+helm_secrets: "v4.6.3"
+
+# JJ (CLI de JSON do tidwall, não o VCS jujutsu)
+jj_install: "no"
+jj_version: "1.9.2"
 
 # Trivy
 trivy_install: "yes"
