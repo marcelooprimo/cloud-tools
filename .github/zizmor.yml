@@ -1,0 +1,8 @@
+# Configuração do zizmor (auditoria dos workflows do GitHub Actions)
+rules:
+  dangerous-triggers:
+    # pr-title.yaml usa pull_request_target por exigência da action de
+    # validação de título; o job NÃO faz checkout do código do fork,
+    # então o token privilegiado não é exposto a código de terceiros.
+    ignore:
+      - pr-title.yaml

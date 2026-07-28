@@ -38,6 +38,9 @@
 - name: Install mise and managed toolchain
   import_tasks: mise.yaml
 
+- name: Configure DevSecOps tooling (pre-commit template dir)
+  import_tasks: devsecops.yaml
+
 - name: Install kubectx and kubens
   import_tasks: kubectx_kubens_package.yaml
 

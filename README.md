@@ -33,7 +33,7 @@ Playbook Ansible que provisiona uma estação de trabalho completa de engenharia
 | IaC | terraform, terragrunt, terraform-docs, tflint |
 | Cloud CLIs | AWS CLI v2 (via mise; + SSM plugin, aws-iam-authenticator), gcloud, oci-cli |
 | Linguagens | Go, Node.js (via mise) |
-| Segurança | trivy (via mise), sops, pre-commit |
+| Segurança | trivy, sops, pre-commit (+ template global com gitleaks), gitleaks, cosign, checkov, kubescape |
 | Shell & editor | zsh + oh-my-zsh + powerlevel10k, fontes MesloLGS NF, Tilix, VS Code + extensões, bat, jq, yq, fzf, shellcheck |
 | Utilitários | Postman, meld, flameshot, htop, mtr, wireshark, entre outros (`vars/<família>.yaml`) |
 
@@ -60,6 +60,8 @@ ansible-playbook -i inventories/inventory.ini playbook-main.yaml --ask-become-pa
 ```
 
 O playbook roda contra `localhost` (conexão local) e usa `become` apenas nas tarefas de sistema.
+
+> **Nota de segurança — grupo `docker`**: o playbook adiciona o usuário ao grupo `docker`, que na prática equivale a acesso root local (qualquer membro pode montar `/` num container). É o comportamento padrão do Docker CE para uso em workstation; se o seu contexto exigir isolamento maior, considere [Docker rootless](https://docs.docker.com/engine/security/rootless/) ou Podman.
 
 ## Configuração
 
