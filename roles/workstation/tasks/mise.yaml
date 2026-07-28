@@ -1,97 +1,84 @@
-# mise (mise-en-place) substitui asdf, tfenv, tgenv e nvm
+# mise (mise-en-place) — gerenciador único de versões de ferramentas
 # https://mise.jdx.dev
 
 - name: Ensure /etc/apt/keyrings exists
   become: true
-  file:
+  ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
     mode: "0755"
-  when: mise_install == "yes" and ansible_os_family == "Debian"
+  when: mise_install | bool and ansible_os_family == "Debian"
 
 - name: Install mise apt key
   become: true
-  get_url:
+  ansible.builtin.get_url:
     url: "https://mise.jdx.dev/gpg-key.pub"
     dest: /etc/apt/keyrings/mise.asc
     mode: "0644"
-  when: mise_install == "yes" and ansible_os_family == "Debian"
+  when: mise_install | bool and ansible_os_family == "Debian"
 
 - name: Add mise apt repository
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [signed-by=/etc/apt/keyrings/mise.asc arch=amd64] https://mise.jdx.dev/deb stable main"
     state: present
     filename: mise
-  when: mise_install == "yes" and ansible_os_family == "Debian"
+  when: mise_install | bool and ansible_os_family == "Debian"
 
 - name: Install mise (apt)
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     name: mise
-  when: mise_install == "yes" and ansible_os_family == "Debian"
+  when: mise_install | bool and ansible_os_family == "Debian"
 
 # openSUSE: instalador oficial (sem repo zypper oficial)
 - name: Download mise installer (openSUSE)
-  get_url:
+  ansible.builtin.get_url:
     url: "https://mise.run"
     dest: /tmp/mise-install.sh
     mode: "0755"
-  when: mise_install == "yes" and ansible_os_family == "Suse"
+  when: mise_install | bool and ansible_os_family == "Suse"
 
 - name: Install mise on openSUSE
-  command:
+  ansible.builtin.command:
     cmd: /tmp/mise-install.sh
     creates: "{{ home_user }}/.local/bin/mise"
-  when: mise_install == "yes" and ansible_os_family == "Suse"
+  when: mise_install | bool and ansible_os_family == "Suse"
 
 - name: Check if bashrc exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ home_user }}/.bashrc"
   register: bashrc
 
 - name: Check if zshrc exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ home_user }}/.zshrc"
   register: zshrc
 
 - name: Activate mise (.bashrc)
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.bashrc"
     line: 'eval "$(mise activate bash)"'
     state: present
-  when: mise_install == "yes" and bashrc.stat.exists
+  when: mise_install | bool and bashrc.stat.exists
 
 - name: Activate mise (.zshrc)
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.zshrc"
     line: 'eval "$(mise activate zsh)"'
     state: present
-  when: mise_install == "yes" and zshrc.stat.exists
-
-# Remove a ativação do asdf legado, se existir
-- name: Remove legacy asdf lines from rc files
-  lineinfile:
-    path: "{{ home_user }}/{{ item.file }}"
-    line: "{{ item.line }}"
-    state: absent
-  loop:
-    - { file: ".bashrc", line: ". $HOME/.asdf/asdf.sh" }
-    - { file: ".bashrc", line: ". $HOME/.asdf/completions/asdf.bash" }
-    - { file: ".zshrc", line: ". $HOME/.asdf/asdf.sh" }
-  when: mise_install == "yes"
-  failed_when: false
+  when: mise_install | bool and zshrc.stat.exists
 
 - name: Create mise config directory
-  file:
+  ansible.builtin.file:
     path: "{{ home_user }}/.config/mise"
     state: directory
     mode: "0755"
-  when: mise_install == "yes"
+  when: mise_install | bool
 
 - name: Deploy mise global config
-  copy:
+  ansible.builtin.copy:
     dest: "{{ home_user }}/.config/mise/config.toml"
     mode: "0644"
     content: |
@@ -114,7 +101,7 @@
       terraform-docs = "{{ terraform_docs_version }}"
       terragrunt = "{{ terragrunt_version }}"
       tflint = "{{ tflint_version }}"
-      {% if trivy_install == "yes" %}
+      {% if trivy_install | bool %}
       trivy = "{{ trivy_version }}"
       {% endif %}
       yq = "{{ yq_version }}"
@@ -122,13 +109,13 @@
 
       [settings]
       idiomatic_version_file_enable_tools = ["node", "terraform"]
-  when: mise_install == "yes"
+  when: mise_install | bool
 
 - name: Install tools with mise
-  shell:
+  ansible.builtin.shell:
     cmd: "mise install --yes"
   environment:
     PATH: "{{ home_user }}/.local/bin:{{ ansible_env.PATH }}"
   register: mise_install_result
   changed_when: "'all tools are installed' not in (mise_install_result.stdout + mise_install_result.stderr)"
-  when: mise_install == "yes"
+  when: mise_install | bool

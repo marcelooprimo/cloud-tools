@@ -1,13 +1,13 @@
 # Faz download do krew (versão pinada, checksum publicado na release)
 - name: Downloading Krew
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/{{ krew_package }}.tar.gz"
     dest: "/tmp/{{ krew_package }}.tar.gz"
     mode: "0644"
     checksum: "sha256:https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/{{ krew_package }}.tar.gz.sha256"
 
 - name: Extracting Krew
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/tmp/{{ krew_package }}.tar.gz"
     dest: /tmp/
     remote_src: true
@@ -15,6 +15,6 @@
 
 # Instala o krew
 - name: Installing Krew
-  shell:
+  ansible.builtin.shell:
     cmd: "/tmp/{{ krew_package }} install krew"
     creates: "{{ home_user }}/.krew/bin/kubectl-krew"

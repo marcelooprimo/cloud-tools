@@ -1,14 +1,14 @@
 # Configuração do ansible-lint (executado no CI — .github/workflows/ci.yaml)
 #
-# skip_list: dívidas técnicas com correção planejada (ver plano de melhoria):
-#   - fqcn / var-naming: refactor estrutural previsto na fase 4
+# var-naming[no-role-prefix]: as variáveis da role (kubectl_version, zsh_install…)
+# são a API pública de configuração do playbook desde a 1.0.0; prefixá-las com
+# workstation_ quebraria todos os usos existentes. Decisão documentada — skip.
 #
-# latest[git], package-latest e no-changed-when foram promovidos a ERRO na
-# fase 2 (supply chain): versões pinadas e changed_when em todos os comandos.
+# latest[git], package-latest e no-changed-when são ERRO desde a fase 2
+# (supply chain); fqcn é ERRO desde a fase 4 (refactor estrutural).
 
 skip_list:
-  - fqcn  # fase 4: adotar ansible.builtin.* em todas as tasks
-  - var-naming[no-role-prefix]  # fase 4: prefixo workstation_ nas vars da role
+  - var-naming[no-role-prefix]
 
 warn_list:
   - command-instead-of-shell  # Use shell only when shell functionality is required

@@ -1,6 +1,6 @@
 # Cria diretorio git
 - name: Creating git directory
-  file:
+  ansible.builtin.file:
     path: "{{ home_user }}/git"
     state: directory
     mode: "0755"
@@ -8,7 +8,7 @@
 # Copia o script que fará
 # as atualizações do repositório
 - name: Copy script to update git dir repo
-  copy:
+  ansible.builtin.copy:
     src: "{{ role_path }}/files/sync_git.sh"
     dest: "{{ home_user }}"
     mode: "0775"
@@ -16,19 +16,19 @@
 # Adiciona todas modificações
 # da variavel $PATH do sistema
 - name: Check if bashrc exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ home_user }}/.bashrc"
   register: bashrc
 
 - name: Remove legacy PATH lines from .bashrc
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.bashrc"
-    regexp: '^export PATH="\$PATH:.*(\.asdf|mise/shims).*"$'
+    regexp: '^export PATH="\$PATH:.*mise/shims.*"$'
     state: absent
   when: bashrc.stat.exists
 
 - name: Ensure app PATH line at .bashrc file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.bashrc"
     regexp: '^export PATH="\$HOME/\.local/share/mise/shims:'
     line: "{{ app_path }}"
@@ -36,19 +36,19 @@
   when: bashrc.stat.exists
 
 - name: Check if zshrc exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ home_user }}/.zshrc"
   register: zshrc
 
 - name: Remove legacy PATH lines from .zshrc
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.zshrc"
-    regexp: '^export PATH="\$PATH:.*(\.asdf|mise/shims).*"$'
+    regexp: '^export PATH="\$PATH:.*mise/shims.*"$'
     state: absent
   when: zshrc.stat.exists
 
 - name: Ensure app PATH line at .zshrc file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ home_user }}/.zshrc"
     regexp: '^export PATH="\$HOME/\.local/share/mise/shims:'
     line: "{{ app_path }}"
@@ -57,14 +57,14 @@
 
 # Adiciona os aliases customizados (bloco gerenciado, idempotente)
 - name: Ensure custom aliases block in .bashrc
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: "{{ home_user }}/.bashrc"
     marker: "# {mark} cloud-tools custom aliases"
     block: "{{ lookup('file', 'aliases') }}"
   when: bashrc.stat.exists
 
 - name: Ensure custom aliases block in .zshrc
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: "{{ home_user }}/.zshrc"
     marker: "# {mark} cloud-tools custom aliases"
     block: "{{ lookup('file', 'aliases') }}"
@@ -76,7 +76,7 @@
 # Postman via snapd (falha esperada em containers sem systemd)
 - name: Installing Postman
   become: true
-  shell:
+  ansible.builtin.shell:
     cmd: "snap install postman"
   register: postman_result
   failed_when: false
@@ -86,7 +86,7 @@
 # openSUSE
 - name: Download Postman
   become: true
-  get_url:
+  ansible.builtin.get_url:
     url: "https://dl.pstmn.io/download/latest/linux_64"
     dest: "/tmp/postman.tar.gz"
     mode: "0755"
@@ -94,14 +94,14 @@
 
 - name: Extract Postman
   become: true
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/tmp/postman.tar.gz"
     dest: "/opt/"
   when: ansible_os_family == "Suse"
 
 - name: Creating Postman Symlink
   become: true
-  file:
+  ansible.builtin.file:
     src: "/opt/Postman/app/Postman"
     dest: "/usr/bin/postman"
     state: link
